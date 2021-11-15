@@ -1,0 +1,51 @@
+{
+  "personalData": {
+    "firstName": "Lucifer",
+    "lastName": "Morningstar",
+    "id": "69696969",
+    "bankAccountData": {
+      "bankName": "Bank of L.A",
+      "branchNumber": "69",
+      "accountNumber": "1222122"
+    },
+    "taxReductionPoints": 7.5,
+    "startWorkingDate": "01/01/1970"
+  },
+  "paycheckData": {
+    "period": "01/2022",
+    "numOfHours": 180,
+    "brutePaymentAmount": {
+      "amount": 29500,
+      "paymentDetails": [
+        {
+          "global": 25000,
+          "car": 2700,
+          "additionalHours": 780
+        }
+      ]
+    },
+    "deductions": {
+      "amount": 9500,
+      "deductionDetails": [
+        {
+          "incomeTax": 6000,
+          "socialSecurity": 2700,
+          "healthTax": 900
+        }
+      ]
+    },
+    "netPaymentAmount": 20000,
+    "vacationData": {
+      "lastBalance": 9,
+      "added": 1,
+      "used": 2,
+      "newBalance": 8
+    },
+    "sickLeaveDaysData": {
+      "lastBalance": 9,
+      "added": 1,
+      "used": 2,
+      "newBalance": 8
+    }
+  }
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.salario.app.ui.fragments.IntroductionFragment"
+    android:padding="16dp">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/intro_animation"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_fileName="welcomeLottie.json"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
+
+    <TextView
+        android:id="@+id/intro_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome!"
+        android:textSize="36sp"
+        android:fontFamily="@font/roboto_regular"
+        app:layout_constraintTop_toBottomOf="@id/intro_animation"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/intro_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Log in with your data that you entered during Your registration."
+        android:textSize="24sp"
+        android:fontFamily="@font/roboto_regular"
+        app:layout_constraintTop_toBottomOf="@id/intro_title"
+        android:layout_marginTop="4dp"/>
+
+    <Button
+        android:id="@+id/sign_up_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/filled_button_bg"
+        app:layout_constraintTop_toBottomOf="@id/intro_subtitle"
+        android:layout_marginTop="64dp"
+        android:fontFamily="@font/roboto_regular"
+        android:textAllCaps="false"
+        android:text="Sign up"/>
+
+    <Button
+        android:id="@+id/sign_in_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/outlined_button_bg"
+        app:layout_constraintTop_toBottomOf="@id/sign_up_btn"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/roboto_regular"
+        android:textColor="@color/purple"
+        android:textAllCaps="false"
+        android:text="Sign in"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
