@@ -60,7 +60,7 @@
         android:fontFamily="@font/roboto_regular"
         android:text="@string/intro_sign_in_btn_text"
         android:textAllCaps="false"
-        android:textColor="@color/purple"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

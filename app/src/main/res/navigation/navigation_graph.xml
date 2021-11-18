@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_identificationFragment_to_statusFragment"
             app:destination="@id/statusFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
     </fragment>
 
     <fragment
