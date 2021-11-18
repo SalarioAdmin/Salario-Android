@@ -11,7 +11,7 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launchWhenCreated {
-            delay(100)
+            delay(150)
             startActivity(
                 Intent(this@SplashScreenActivity, MainContainerActivity::class.java)
             )
