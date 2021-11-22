@@ -1,5 +1,6 @@
 package io.salario.app.ui.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,14 +9,21 @@ import android.widget.Toast
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.salario.app.R
 import com.salario.app.databinding.SignInFragmentBinding
-import io.salario.app.ui.viewmodels.IdentificationViewModel
+import com.salario.app.databinding.ViewResetPasswordBinding
+import io.salario.app.ui.viewmodels.SignInViewModel
 import io.salario.app.utils.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SignInFragment : Fragment() {
     private lateinit var binding: SignInFragmentBinding
-    private val viewModel: IdentificationViewModel by viewModels()
+    private val viewModel: SignInViewModel by viewModels()
+
+    private lateinit var dialog: AlertDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,6 +37,11 @@ class SignInFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
+            titleLayout.apply {
+                title.text = getString(R.string.sign_in_title)
+                subtitle.text = getString(R.string.sign_in_subtitle)
+            }
+
             emailEt.doAfterTextChanged {
                 validateEmail()
             }
@@ -39,14 +52,40 @@ class SignInFragment : Fragment() {
 
             signInActionBtn.setOnClickListener {
                 if (validateCredentials()) {
-                    findNavController().navigate(
-                        SignInFragmentDirections.actionIdentificationFragmentToStatusFragment()
-                    )
+                    viewModel.signIn(
+                        binding.emailEt.text.toString(),
+                        binding.passwordEt.text.toString()
+                    ).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            findNavController().navigate(
+                                SignInFragmentDirections.actionIdentificationFragmentToStatusFragment()
+                            )
+                        } else {
+                            Toast.makeText(context, "Wrong data", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
                 }
             }
 
             forgotPasswordLink.setOnClickListener {
-                Toast.makeText(context, "Fuck... sorry for you", Toast.LENGTH_SHORT).show()
+                val viewResetPasswordBinding = ViewResetPasswordBinding.inflate(layoutInflater)
+                viewResetPasswordBinding.resetPasswordActionBtn.setOnClickListener {
+                    viewResetPasswordBinding.apply {
+                        if (!resetPasswordEmailEt.text.isNullOrEmpty()) {
+                            resetPassword(
+                                resetPasswordEmailEt.text.toString(),
+                                this
+                            )
+                        } else {
+                            resetPasswordEmailInputLayout.error = "Enter a valid email address."
+                        }
+                    }
+                }
+
+                dialog = AlertDialog.Builder(context)
+                    .setView(viewResetPasswordBinding.root)
+                    .create().apply { show() }
             }
 
             signUpLinkBtn.setOnClickListener {
@@ -54,6 +93,36 @@ class SignInFragment : Fragment() {
                     SignInFragmentDirections.actionSignInFragmentToSignupFragment()
                 )
             }
+        }
+    }
+
+    private fun resetPassword(
+        email: String,
+        binding: ViewResetPasswordBinding
+    ) {
+        viewModel.resetPassword(email)
+            .addOnCompleteListener {
+                lifecycleScope.launch {
+                    if (it.isSuccessful) {
+                        binding.resetPasswordLoaderAnimation.visibility = View.GONE
+                        binding.resetPasswordSuccess.visibility = View.VISIBLE
+                        delay(2500)
+                        dialog.dismiss()
+                    }
+                }
+            }
+            .addOnFailureListener {
+                lifecycleScope.launch {
+                    binding.resetPasswordLoaderAnimation.visibility = View.GONE
+                    binding.resetPasswordFailed.visibility = View.VISIBLE
+                    delay(2500)
+                    dialog.dismiss()
+                }
+            }
+        binding.viewsGroup.visibility = View.INVISIBLE
+        binding.resetPasswordLoaderAnimation.apply {
+            visibility = View.VISIBLE
+            playAnimation()
         }
     }
 
@@ -79,7 +148,7 @@ class SignInFragment : Fragment() {
     private fun validateEmail(): Boolean {
         var isValidEmailAddress = false
         if (binding.emailEt.text.isNullOrBlank()) {
-            binding.emailInputLayout.error = "Email field cannot be empty"
+            binding.emailInputLayout.error = "Email should not be empty"
         } else if (!isValidEmail(binding.emailEt.text.toString())) {
             binding.emailInputLayout.error = "Please enter a correct Email address"
         } else {
@@ -94,7 +163,7 @@ class SignInFragment : Fragment() {
         var isValidPassword = false
 
         if (binding.passwordEt.text.isNullOrBlank()) {
-            binding.passwordInputLayout.error = "Password cannot be empty"
+            binding.passwordInputLayout.error = "Password should not be empty"
         } else {
             when (isValidPassword(binding.passwordEt.text.toString())) {
                 PasswordState.PASSWORD_OK -> {

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "11879313123",
+    "project_id": "salario-6b198",
+    "storage_bucket": "salario-6b198.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:11879313123:android:eeed64a2619ae4d6bb9fd6",
+        "android_client_info": {
+          "package_name": "io.salario.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "11879313123-2g9fie640n9rp8orkg3r27fsvfl3c774.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4SaBI_y9yN6yzYwTFtQ2cd9lddjdzfGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "11879313123-2g9fie640n9rp8orkg3r27fsvfl3c774.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
