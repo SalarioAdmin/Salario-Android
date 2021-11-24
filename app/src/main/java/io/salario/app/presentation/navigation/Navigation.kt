@@ -4,15 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import io.salario.app.presentation.screens.IntroScreen
-import io.salario.app.presentation.screens.SignInScreen
-import io.salario.app.presentation.screens.SignUpScreen
-import io.salario.app.presentation.screens.StatusScreen
+import io.salario.app.presentation.screens.*
 
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Destination.IntroDestination.route) {
+    NavHost(navController = navController, startDestination = Destination.SplashDestination.route) {
+        composable(route = Destination.SplashDestination.route) {
+            SplashScreen(navController = navController)
+        }
+
         composable(route = Destination.IntroDestination.route) {
             IntroScreen(navController = navController)
         }

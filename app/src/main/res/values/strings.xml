@@ -2,6 +2,9 @@
     <!--  General texts  -->
     <string name="app_name">Salario.io</string>
 
+    <!--  Splash screen texts  -->
+    <string name="splash_screen_icon_content_description">Salario Logo</string>
+
     <!--  Introduction texts  -->
     <string name="intro_title_text">Welcome to Salario!</string>
     <string name="intro_subtitle_text">Please Sign in or Sign up to use the service.</string>
