@@ -15,4 +15,5 @@
     <!--  Sign up texts  -->
     <string name="sign_up_title">New Account</string>
     <string name="sign_up_subtitle">Sign up and get started</string>
+    <string name="title_activity_container">ContainerActivity</string>
 </resources>

@@ -2,27 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.salario.app">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name="io.salario.app.application.SalarioApplication"
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Salario">
-        <activity android:name="io.salario.app.ui.activities.SplashScreenActivity"
-            android:theme="@style/Theme.SplashTheme"
-            android:noHistory="true">
+        android:theme="@style/Theme.Salario"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name="io.salario.app.presentation.activities.ContainerActivity"
+            android:exported="true"
+            android:label="@string/title_activity_container"
+            android:theme="@style/Theme.Salario.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="io.salario.app.ui.activities.MainContainerActivity"/>
     </application>
 
 </manifest>
