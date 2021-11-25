@@ -13,9 +13,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.salario.app.R
-import io.salario.app.presentation.customui.CornerRoundedButton
-import io.salario.app.presentation.customui.CornerRoundedButtonAppearance
 import io.salario.app.presentation.customui.WelcomeCard
+import io.salario.app.presentation.customui.buttons.CornerRoundedButton
+import io.salario.app.presentation.customui.buttons.CornerRoundedButtonAppearance
 import io.salario.app.presentation.customui.textfields.EmailTextField
 import io.salario.app.presentation.customui.textfields.PasswordTextField
 import io.salario.app.presentation.customui.textfields.rememberTextFieldState
