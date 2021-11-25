@@ -1,4 +1,4 @@
-package io.salario.app.presentation.customui
+package io.salario.app.presentation.customui.buttons
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
