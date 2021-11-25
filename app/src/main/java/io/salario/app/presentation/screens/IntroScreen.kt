@@ -63,7 +63,7 @@ fun IntroScreen(navController: NavController) {
 
         Text(
             text = stringResource(id = R.string.intro_subtitle_text),
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.subtitle2,
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .constrainAs(subtitle) {
