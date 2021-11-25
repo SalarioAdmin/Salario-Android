@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.salario.app.presentation.theme.Purple500
 
@@ -22,7 +23,7 @@ fun CornerRoundedButton(
                 onClick = onClick,
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colors.onPrimary
+                    contentColor = Color.White
                 ),
                 modifier = modifier
                     .fillMaxWidth()
