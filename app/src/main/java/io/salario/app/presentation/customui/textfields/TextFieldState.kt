@@ -5,11 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.Saver
 
 @Composable
 fun rememberTextFieldState(
     initialText: String,
-    validate: (String) -> String? = { null },
+    validate: (String) -> String? = { null }
 ): TextFieldState {
     return rememberSaveable(saver = TextFieldState.Saver(validate)) {
         TextFieldState(initialText, validate)
@@ -26,19 +27,28 @@ class TextFieldState(
     var error by mutableStateOf<String?>(null)
         private set
 
+    var help by mutableStateOf<String?>(null)
+        private set
+
     fun updateText(newValue: String) {
         text = newValue
         error = null
+        help = null
+    }
+
+    fun validateForHelp() {
+        help = validator(text)
     }
 
     fun validate() {
         error = validator(text)
+        help = null
     }
 
     companion object {
         fun Saver(
             validate: (String) -> String?,
-        ) = androidx.compose.runtime.saveable.Saver<TextFieldState, String>(
+        ) = Saver<TextFieldState, String>(
             save = { it.text },
             restore = { TextFieldState(it, validate) }
         )

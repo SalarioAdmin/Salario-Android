@@ -16,20 +16,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.salario.app.presentation.theme.Purple500
 
 @Composable
 fun EmailTextField(
     modifier: Modifier = Modifier,
     state: TextFieldState,
-    maxLength: Int = 30,
-    nextFocusRequester: FocusRequester? = null
+    maxLength: Int = 30
 ) {
     val maxPasswordLength by remember { mutableStateOf(maxLength) }
 
@@ -56,25 +52,12 @@ fun EmailTextField(
                     state.updateText(it)
                 }
             }
-//            keyboardActions = KeyboardActions(
-//                onNext = {
-//                    state.validate()
-//                    nextFocusRequester?.requestFocus()
-//                },
-//                onDone = {
-//                    state.validate()
-//                }
-//            ),
-//            keyboardOptions = KeyboardOptions(
-//                imeAction = if (nextFocusRequester != null)
-//                    ImeAction.Next else ImeAction.Done
-//            )
         )
 
         state.error?.let {
-            Text(it, color = Color.Red)
+            Text(it, color = Color.Red, style = MaterialTheme.typography.body2)
         } ?: run {
-            Text("")
+            Text("", style = MaterialTheme.typography.body2)
         }
     }
 }

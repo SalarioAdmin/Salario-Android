@@ -66,7 +66,7 @@ fun PasswordTextField(
                 if (it.length <= maxPasswordLength) {
                     state.apply {
                         updateText(it)
-                        validate()
+                        validateForHelp()
                     }
                 }
             },
@@ -76,10 +76,22 @@ fun PasswordTextField(
 
         )
 
-        state.error?.let {
-            Text(it, color = Color.Red)
-        } ?: run {
-            Text("")
+        when {
+            state.error != null -> {
+                Text(
+                    state.error!!,
+                    color = Color.Red,
+                    style = MaterialTheme.typography.body2
+                )
+            }
+            state.help != null -> {
+                Text(
+                    state.help!!, style = MaterialTheme.typography.body2
+                )
+            }
+            else -> {
+                Text("", style = MaterialTheme.typography.body2)
+            }
         }
     }
 }

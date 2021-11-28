@@ -78,7 +78,7 @@ fun IntroScreen(navController: NavController) {
                 navController.navigate(Destination.SignUpDestination.route)
             },
             modifier = Modifier.constrainAs(signUpBtn) {
-                bottom.linkTo(signInBtn.top)
+                bottom.linkTo(signInBtn.top, margin = 8.dp)
             })
 
         CornerRoundedButton(

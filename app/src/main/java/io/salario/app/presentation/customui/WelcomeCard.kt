@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -46,5 +47,14 @@ fun WelcomeCard(title: String, subtitle: String, bgColor: Color, modifier: Modif
                 .fillMaxWidth()
                 .height(32.dp)
         )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewWelcomeCard() {
+    Column(verticalArrangement = Arrangement.Top,
+    modifier = Modifier.fillMaxHeight()) {
+        WelcomeCard(title = "Welcome", subtitle = "Hello", bgColor = Color.White)
     }
 }
