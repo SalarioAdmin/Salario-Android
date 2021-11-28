@@ -1,14 +1,13 @@
-package io.salario.app.data.source.loaclassets
+package io.salario.app.data.source.loacalassets
 
 import android.app.Application
 import android.util.Log
 import com.google.gson.Gson
 import io.salario.app.application.SalarioApplication
 import io.salario.app.data.model.Paycheck
-import java.lang.Exception
 import java.nio.charset.StandardCharsets
 
-class LocalAssetsDataSource() {
+class LocalAssetsDataSource {
     private lateinit var paycheck: Paycheck
 
     companion object {

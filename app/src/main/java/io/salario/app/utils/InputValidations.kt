@@ -52,6 +52,44 @@ fun isValidPassword(passwordInput: String): PasswordValidationResult {
     return validationResult
 }
 
+fun getPasswordValidationError(password: String): String? {
+    return when (isValidPassword(password)) {
+        is PasswordValidationResult.PasswordOk -> {
+            null
+        }
+
+        is PasswordValidationResult.ErrorPasswordTooShort -> {
+            "Password should be minimum " +
+                    "$MIN_PASSWORD_LENGTH characters long."
+        }
+
+        is PasswordValidationResult.ErrorPasswordTooLong -> {
+            "Password should be maximum " +
+                    "$MAX_PASSWORD_LENGTH characters long."
+        }
+
+        is PasswordValidationResult.ErrorPasswordShouldContainLetters -> {
+            "Password should contain letters."
+        }
+
+        is PasswordValidationResult.ErrorPasswordShouldContainCapitalLetter -> {
+            "Password should contain at least one capital letter."
+        }
+
+        is PasswordValidationResult.ErrorPasswordShouldContainLowerCaseLetter -> {
+            "Password should contain at least one small letter."
+        }
+
+        is PasswordValidationResult.ErrorPasswordShouldContainNumber -> {
+            "Password should contain at least one number"
+        }
+
+        is PasswordValidationResult.ErrorPasswordShouldContainSpecialCharacter -> {
+            "Password should contain at least one special character"
+        }
+    }
+}
+
 sealed class PasswordValidationResult {
     object PasswordOk : PasswordValidationResult()
     object ErrorPasswordTooShort : PasswordValidationResult()

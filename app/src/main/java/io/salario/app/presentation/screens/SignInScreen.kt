@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.salario.app.R
-import io.salario.app.application.SalarioApplication
 import io.salario.app.presentation.customui.WelcomeCard
 import io.salario.app.presentation.customui.buttons.CornerRoundedButton
 import io.salario.app.presentation.customui.buttons.CornerRoundedButtonAppearance
@@ -25,11 +24,24 @@ import io.salario.app.presentation.customui.textfields.EmailTextField
 import io.salario.app.presentation.customui.textfields.PasswordTextField
 import io.salario.app.presentation.customui.textfields.rememberTextFieldState
 import io.salario.app.presentation.navigation.Destination
-import io.salario.app.utils.*
+import io.salario.app.presentation.viewmodels.AuthenticationViewModel
+import io.salario.app.utils.getPasswordValidationError
+import io.salario.app.utils.isValidEmail
+import kotlinx.coroutines.flow.collect
 
 @Composable
-fun SignInScreen(navController: NavController) {
+fun SignInScreen(navController: NavController, authViewModel: AuthenticationViewModel) {
     val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        authViewModel.userDataFlow.collect {
+            navController.navigate(Destination.StatusDestination.route) {
+                popUpTo(Destination.SignInDestination.route) {
+                    inclusive = true
+                }
+            }
+        }
+    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -100,7 +112,7 @@ fun SignInScreen(navController: NavController) {
                 passwordState.validate()
 
                 if (emailState.error == null && passwordState.error == null) {
-                    navController.navigate(Destination.StatusDestination.route)
+                    authViewModel.signIn(emailState.text, passwordState.text)
                 }
             }
         )
@@ -130,53 +142,21 @@ fun SignInScreen(navController: NavController) {
             text = "Sign Up",
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {
-                // TODO show dialog that all data will be deleted
-                navController.navigate(Destination.SignUpDestination.route)
+                navController.navigate(Destination.SignUpDestination.route) {
+                    popUpTo(Destination.SignInDestination.route) {
+                        inclusive = true
+                    }
+                }
             }
         )
-    }
-}
-
-fun getPasswordValidationError(password: String): String? {
-    return when (isValidPassword(password)) {
-        is PasswordValidationResult.PasswordOk -> {
-            null
-        }
-
-        is PasswordValidationResult.ErrorPasswordTooShort -> {
-            "Password should be minimum " +
-                    "$MIN_PASSWORD_LENGTH characters long."
-        }
-
-        is PasswordValidationResult.ErrorPasswordTooLong -> {
-            "Password should be maximum " +
-                    "$MAX_PASSWORD_LENGTH characters long."
-        }
-
-        is PasswordValidationResult.ErrorPasswordShouldContainLetters -> {
-            "Password should contain letters."
-        }
-
-        is PasswordValidationResult.ErrorPasswordShouldContainCapitalLetter -> {
-            "Password should contain at least one capital letter."
-        }
-
-        is PasswordValidationResult.ErrorPasswordShouldContainLowerCaseLetter -> {
-            "Password should contain at least one small letter."
-        }
-
-        is PasswordValidationResult.ErrorPasswordShouldContainNumber -> {
-            "Password should contain at least one number"
-        }
-
-        is PasswordValidationResult.ErrorPasswordShouldContainSpecialCharacter -> {
-            "Password should contain at least one special character"
-        }
     }
 }
 
 @Preview
 @Composable
 fun PreviewSignInScreen() {
-    SignInScreen(navController = NavController(SalarioApplication.INSTANCE))
+    SignInScreen(
+        navController = NavController(LocalContext.current),
+        authViewModel = AuthenticationViewModel()
+    )
 }

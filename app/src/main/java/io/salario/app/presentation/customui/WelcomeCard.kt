@@ -53,8 +53,10 @@ fun WelcomeCard(title: String, subtitle: String, bgColor: Color, modifier: Modif
 @Preview
 @Composable
 fun PreviewWelcomeCard() {
-    Column(verticalArrangement = Arrangement.Top,
-    modifier = Modifier.fillMaxHeight()) {
+    Column(
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier.fillMaxHeight()
+    ) {
         WelcomeCard(title = "Welcome", subtitle = "Hello", bgColor = Color.White)
     }
 }

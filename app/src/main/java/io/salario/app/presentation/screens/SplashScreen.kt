@@ -49,12 +49,14 @@ fun SplashScreen(navController: NavController) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = Brush.verticalGradient(
-                colors = listOf(
-                    MaterialTheme.colors.primaryVariant,
-                    MaterialTheme.colors.primary
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colors.primaryVariant,
+                        MaterialTheme.colors.primary
+                    )
                 )
-            ))
+            )
     ) {
         Image(
             painter = painterResource(id = R.drawable.designed_salario_logo),
