@@ -1,3 +1,22 @@
 <resources>
-    <string name="app_name">Salario</string>
+    <!--  General texts  -->
+    <string name="app_name">Salario.io</string>
+
+    <!--  Splash screen texts  -->
+    <string name="splash_screen_icon_content_description">Salario Logo</string>
+
+    <!--  Introduction texts  -->
+    <string name="intro_title_text">Welcome to Salario!</string>
+    <string name="intro_subtitle_text">Please Sign in or Sign up to use the service.</string>
+    <string name="intro_sign_up_btn_text">Sign up</string>
+    <string name="intro_sign_in_btn_text">Sign in</string>
+
+    <!--  Sign in texts  -->
+    <string name="sign_in_title">Welcome!</string>
+    <string name="sign_in_subtitle">Sign in and get started</string>
+
+    <!--  Sign up texts  -->
+    <string name="sign_up_title">New Account</string>
+    <string name="sign_up_subtitle">Sign up and get started</string>
+    <string name="title_activity_container">Salario</string>
 </resources>

@@ -1,9 +1,16 @@
 package io.salario.app.data.repo
 
-import io.salario.app.data.source.loaclassets.LocalAssetsDataSource
+import io.salario.app.data.source.loacalassets.LocalAssetsDataSource
+import io.salario.app.data.source.remote.retrofit.api.RetrofitClient
+import io.salario.app.data.source.remote.retrofit.api.SalarioApi
 
-class SalaryDataRepository() {
+class SalaryDataRepository(
+    private val salarioApi: SalarioApi = RetrofitClient.salarioAApi
+) {
+
     private val localAssetsDataSource = LocalAssetsDataSource()
 
-    fun getPaycheckData() = localAssetsDataSource.getPaycheckData()
+    fun getPaycheckDataFromLocal() = localAssetsDataSource.getPaycheckData()
+
+    suspend fun getPaycheckFromRemote() = salarioApi.getPaycheckById("1")
 }
