@@ -25,7 +25,7 @@ object FirebaseAuthManager {
         email: String,
         password: String
     ): Task<AuthResult> {
-       return auth.signInWithEmailAndPassword(email, password)
+        return auth.signInWithEmailAndPassword(email, password)
     }
 
     fun resetPassword(email: String): Task<Void> {

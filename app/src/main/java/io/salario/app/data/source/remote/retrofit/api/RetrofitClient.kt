@@ -13,5 +13,5 @@ object RetrofitClient {
             .build()
     }
 
-    val salaryAApi: SalaryApi = getRetrofit().create(SalaryApi::class.java)
+    val salarioAApi: SalarioApi = getRetrofit().create(SalarioApi::class.java)
 }

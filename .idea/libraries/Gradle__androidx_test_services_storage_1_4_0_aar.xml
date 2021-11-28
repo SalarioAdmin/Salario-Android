@@ -4,9 +4,12 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5685b2a31dfccfa73da08af82ff98482/storage-1.4.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/76c551b4b982e8418b4fc90a891373d0/storage-1.4.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b27e221afa5d9bf9783628919a5b358c/storage-1.4.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8262d17b0bb77ffd971cded557a8afa6/storage-1.4.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8262d17b0bb77ffd971cded557a8afa6/storage-1.4.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8262d17b0bb77ffd971cded557a8afa6/storage-1.4.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a94dbb1d8f498c314376be3bac12ee84/storage-1.4.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/9a03606ca354f88009335e21b24ec50b/storage-1.4.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/625eb8c9c4cd0c66fc4a062752097106/transformed/storage-1.4.0/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/625eb8c9c4cd0c66fc4a062752097106/transformed/storage-1.4.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/625eb8c9c4cd0c66fc4a062752097106/transformed/storage-1.4.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
