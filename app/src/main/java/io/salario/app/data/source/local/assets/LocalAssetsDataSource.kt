@@ -1,4 +1,4 @@
-package io.salario.app.data.source.loacalassets
+package io.salario.app.data.source.local.assets
 
 import android.app.Application
 import android.util.Log

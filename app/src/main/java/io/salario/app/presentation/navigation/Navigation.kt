@@ -12,7 +12,7 @@ fun Navigation(authViewModel: AuthenticationViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Destination.SplashDestination.route) {
         composable(route = Destination.SplashDestination.route) {
-            SplashScreen(navController = navController)
+            SplashScreen(navController = navController, authViewModel)
         }
 
         composable(route = Destination.IntroDestination.route) {
@@ -27,8 +27,12 @@ fun Navigation(authViewModel: AuthenticationViewModel) {
             SignUpScreen(navController = navController, authViewModel)
         }
 
+        composable(route = Destination.EmailValidationDestination.route) {
+            EmailValidationScreen(navController = navController, authViewModel)
+        }
+
         composable(route = Destination.StatusDestination.route) {
-            StatusScreen(navController = navController)
+            StatusScreen(navController = navController, authViewModel)
         }
     }
 }

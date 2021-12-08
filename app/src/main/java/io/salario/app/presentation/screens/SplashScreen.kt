@@ -20,10 +20,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.salario.app.R
 import io.salario.app.presentation.navigation.Destination
+import io.salario.app.presentation.viewmodels.AuthenticationViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 
 @Composable
-fun SplashScreen(navController: NavController) {
+fun SplashScreen(navController: NavController, authViewModel: AuthenticationViewModel) {
     val scaleAnimation = remember {
         Animatable(0.1f)
     }
@@ -38,9 +40,20 @@ fun SplashScreen(navController: NavController) {
                 }
             ))
         delay(300L)
-        navController.navigate(Destination.IntroDestination.route) {
-            popUpTo(Destination.SplashDestination.route) {
-                inclusive = true
+
+        authViewModel.userAuthState.collect { userAuthenticated ->
+            if (!userAuthenticated) {
+                navController.navigate(Destination.IntroDestination.route) {
+                    popUpTo(Destination.SplashDestination.route) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                navController.navigate(Destination.StatusDestination.route) {
+                    popUpTo(Destination.SplashDestination.route) {
+                        inclusive = true
+                    }
+                }
             }
         }
     }

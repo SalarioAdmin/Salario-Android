@@ -75,7 +75,11 @@ fun IntroScreen(navController: NavController) {
             text = stringResource(id = R.string.intro_sign_up_btn_text),
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
-                navController.navigate(Destination.SignUpDestination.route)
+                navController.navigate(Destination.SignUpDestination.route) {
+                    popUpTo(Destination.IntroDestination.route) {
+                        inclusive = true
+                    }
+                }
             },
             modifier = Modifier.constrainAs(signUpBtn) {
                 bottom.linkTo(signInBtn.top, margin = 8.dp)
@@ -85,7 +89,11 @@ fun IntroScreen(navController: NavController) {
             text = stringResource(id = R.string.intro_sign_in_btn_text),
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {
-                navController.navigate(Destination.SignInDestination.route)
+                navController.navigate(Destination.SignInDestination.route) {
+                    popUpTo(Destination.IntroDestination.route) {
+                        inclusive = true
+                    }
+                }
             },
             modifier = Modifier
                 .constrainAs(signInBtn) {

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.salario.app.R
+import io.salario.app.data.utils.Status
 import io.salario.app.presentation.customui.WelcomeCard
 import io.salario.app.presentation.customui.buttons.CornerRoundedButton
 import io.salario.app.presentation.customui.buttons.CornerRoundedButtonAppearance
@@ -34,10 +35,46 @@ fun SignInScreen(navController: NavController, authViewModel: AuthenticationView
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        authViewModel.userDataFlow.collect {
-            navController.navigate(Destination.StatusDestination.route) {
-                popUpTo(Destination.SignInDestination.route) {
-                    inclusive = true
+        authViewModel.userData.collect {
+            when (it.status) {
+                is Status.Success -> {
+                    navController.navigate(Destination.StatusDestination.route) {
+                        popUpTo(Destination.SignInDestination.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+                is Status.Loading -> {
+                    Toast
+                        .makeText(context, "Loading...", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                is Status.Error -> {
+                    Toast
+                        .makeText(context, it.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        authViewModel.resetPasswordResult.collect {
+            when (it.status) {
+                is Status.Success -> {
+                    Toast
+                        .makeText(context, it.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
+                is Status.Loading -> {
+                    Toast
+                        .makeText(context, "Loading...", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                is Status.Error -> {
+                    Toast
+                        .makeText(context, it.message, Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -127,9 +164,10 @@ fun SignInScreen(navController: NavController, authViewModel: AuthenticationView
                     end.linkTo(parent.end)
                 }
                 .clickable {
-                    Toast
-                        .makeText(context, "TODO", Toast.LENGTH_SHORT)
-                        .show()
+                    emailState.validate()
+                    if (emailState.error == null) {
+                        authViewModel.resetPassword(emailState.text)
+                    }
                 }
         )
 

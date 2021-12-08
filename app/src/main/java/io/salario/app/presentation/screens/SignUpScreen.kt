@@ -1,5 +1,6 @@
 package io.salario.app.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -13,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.salario.app.R
+import io.salario.app.data.utils.Status
 import io.salario.app.presentation.customui.WelcomeCard
 import io.salario.app.presentation.customui.buttons.CornerRoundedButton
 import io.salario.app.presentation.customui.buttons.CornerRoundedButtonAppearance
@@ -28,16 +30,28 @@ import kotlinx.coroutines.flow.collect
 
 @Composable
 fun SignUpScreen(navController: NavController, authViewModel: AuthenticationViewModel) {
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = true) {
-        authViewModel.signUpRes.collect {
-            if (it) {
-                navController.navigate(Destination.StatusDestination.route) {
-                    popUpTo(Destination.SignUpDestination.route) {
-                        inclusive = true
+        authViewModel.signUpResult.collect {
+            when (it.status) {
+                is Status.Success -> {
+                    navController.navigate(Destination.EmailValidationDestination.route) {
+                        popUpTo(Destination.SignUpDestination.route) {
+                            inclusive = true
+                        }
                     }
                 }
-            } else {
-                // TODO Show some error
+                is Status.Loading -> {
+                    Toast
+                        .makeText(context, "Loading...", Toast.LENGTH_SHORT)
+                        .show()
+                }
+                is Status.Error -> {
+                    Toast
+                        .makeText(context, it.message, Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
     }

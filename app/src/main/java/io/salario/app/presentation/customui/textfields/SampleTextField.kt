@@ -1,6 +1,7 @@
 package io.salario.app.presentation.customui.textfields
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
@@ -24,6 +25,9 @@ fun SampleTextField(
         modifier = modifier.padding(horizontal = 16.dp)
     ) {
         OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
             value = state.text,
             label = { Text(label, style = MaterialTheme.typography.body1) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

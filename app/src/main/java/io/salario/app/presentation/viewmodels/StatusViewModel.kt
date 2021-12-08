@@ -16,9 +16,9 @@ class StatusViewModel : ViewModel() {
     }
 
     private fun getPaycheck() {
-        viewModelScope.launch {
-            val paycheck = repo.getPaycheckFromRemote()
-            paycheckFlow.emit(paycheck)
-        }
+//        viewModelScope.launch {
+//            val paycheck = repo.getPaycheckFromRemote()
+//            paycheckFlow.emit(paycheck)
+//        }
     }
 }
