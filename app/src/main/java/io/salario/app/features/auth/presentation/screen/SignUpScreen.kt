@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -14,28 +15,73 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.salario.app.R
-import io.salario.app.core.customui.WelcomeCard
-import io.salario.app.core.customui.buttons.CornerRoundedButton
-import io.salario.app.core.customui.buttons.CornerRoundedButtonAppearance
-import io.salario.app.core.customui.textfields.EmailTextField
-import io.salario.app.core.customui.textfields.PasswordTextField
-import io.salario.app.core.customui.textfields.SampleTextField
-import io.salario.app.core.customui.textfields.rememberTextFieldState
+import io.salario.app.core.customui.composable.*
+import io.salario.app.core.customui.state_holder.TextFieldState
 import io.salario.app.core.navigation.Destination
-import io.salario.app.core.util.getPasswordValidationError
-import io.salario.app.core.util.isValidEmail
-import io.salario.app.features.auth.presentation.viewmodel.AuthViewModel
+import io.salario.app.features.auth.presentation.viewmodel.SignUpViewModel
 
 @Composable
-fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
-    if (viewModel.signUpState.value.shouldNavigateToValidation) {
-        navController.navigate(Destination.EmailValidationDestination.route) {
-            popUpTo(Destination.SignUpDestination.route) {
-                inclusive = true
+fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hiltViewModel()) {
+    val state = viewModel.signUpState
+
+    // TODO understand how to implement proper navigation once.
+    LaunchedEffect(key1 = true) {
+        if (state.shouldNavigateForward) {
+            navController.navigate(Destination.EmailValidationDestination.route) {
+                popUpTo(Destination.SignUpDestination.route) {
+                    inclusive = true
+                }
             }
         }
-        viewModel.signUpState.value.shouldNavigateToValidation = false
     }
+
+    SignUpScreenContent(
+        isLoading = state.isLoading,
+        firstNameInputFieldState = state.firstNameInputState,
+        lastNameInputFieldState = state.lastNameInputState,
+        emailInputFieldState = state.emailInputState,
+        passwordInputFieldState = state.passwordInputState,
+        onSignUpPressed = {
+            state.apply {
+                firstNameInputState.validate()
+                lastNameInputState.validate()
+                emailInputState.validate()
+                passwordInputState.validate()
+
+                if (firstNameInputState.hasNoError() &&
+                    lastNameInputState.hasNoError() &&
+                    emailInputState.hasNoError() &&
+                    passwordInputState.hasNoError()
+                ) {
+                    viewModel.onSignUp(
+                        firstNameInputState.text,
+                        lastNameInputState.text,
+                        emailInputState.text,
+                        passwordInputState.text
+                    )
+                }
+            }
+        },
+        onSignInPressed = {
+            navController.navigate(Destination.SignInDestination.route) {
+                popUpTo(Destination.SignUpDestination.route) {
+                    inclusive = true
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun SignUpScreenContent(
+    isLoading: Boolean,
+    firstNameInputFieldState: TextFieldState,
+    lastNameInputFieldState: TextFieldState,
+    emailInputFieldState: TextFieldState,
+    passwordInputFieldState: TextFieldState,
+    onSignUpPressed: () -> Unit,
+    onSignInPressed: () -> Unit
+) {
 
     ConstraintLayout(
         modifier = Modifier
@@ -51,7 +97,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
             thirdPartySignInLayout,
             signInBtn) = createRefs()
 
-        if (viewModel.signUpState.value.isLoading) {
+        if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.constrainAs(loadingProgressBar) {
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
@@ -69,40 +115,12 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
             bgColor = MaterialTheme.colors.background
         )
 
-        val emailState = rememberTextFieldState(
-            initialText = "",
-            validate = { email ->
-                when {
-                    email.isEmpty() || email.isBlank() -> "Email should not be empty."
-                    !isValidEmail(email) -> "Please enter a valid Email address."
-                    else -> null
-                }
-            })
-
         EmailTextField(
             modifier = Modifier.constrainAs(emailTextField) {
                 top.linkTo(welcomeCard.bottom, margin = 42.dp)
             },
-            state = emailState
+            state = emailInputFieldState
         )
-
-        val firstNameState = rememberTextFieldState(
-            initialText = "",
-            validate = { firstName ->
-                when {
-                    firstName.isEmpty() || firstName.isBlank() -> "First Name should not be empty."
-                    else -> null
-                }
-            })
-
-        val lastNameState = rememberTextFieldState(
-            initialText = "",
-            validate = { lastName ->
-                when {
-                    lastName.isEmpty() || lastName.isBlank() -> "Last Name should not be empty."
-                    else -> null
-                }
-            })
 
         Row(
             modifier = Modifier
@@ -112,25 +130,24 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            SampleTextField(Modifier.weight(1f), label = "First Name", state = firstNameState)
-            SampleTextField(Modifier.weight(1f), label = "Last Name", state = lastNameState)
-        }
+            SampleTextField(
+                Modifier.weight(1f),
+                label = "First Name",
+                state = firstNameInputFieldState
+            )
 
-        val passwordState = rememberTextFieldState(
-            initialText = "",
-            validate = { password ->
-                if (password.isEmpty() || password.isBlank()) {
-                    "Password should not be empty."
-                } else {
-                    getPasswordValidationError(password)
-                }
-            })
+            SampleTextField(
+                Modifier.weight(1f),
+                label = "Last Name",
+                state = lastNameInputFieldState
+            )
+        }
 
         PasswordTextField(
             modifier = Modifier.constrainAs(passwordTextField) {
                 top.linkTo(nameLayout.bottom, margin = 8.dp)
             },
-            state = passwordState
+            state = passwordInputFieldState
         )
 
         CornerRoundedButton(
@@ -142,23 +159,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
             text = "Sign Up",
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
-                emailState.validate()
-                passwordState.validate()
-                firstNameState.validate()
-                lastNameState.validate()
-
-                if (emailState.error == null &&
-                    passwordState.error == null &&
-                    firstNameState.error == null &&
-                    lastNameState.error == null
-                ) {
-                    viewModel.onSignUp(
-                        firstNameState.text,
-                        lastNameState.text,
-                        emailState.text,
-                        passwordState.text
-                    )
-                }
+                onSignUpPressed()
             }
         )
 
@@ -171,12 +172,7 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
             text = "Sign In",
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {
-                // TODO show dialog that all data will be deleted
-                navController.navigate(Destination.SignInDestination.route) {
-                    popUpTo(Destination.SignUpDestination.route) {
-                        inclusive = true
-                    }
-                }
+                onSignInPressed()
             }
         )
     }
@@ -186,7 +182,6 @@ fun SignUpScreen(navController: NavController, viewModel: AuthViewModel) {
 @Composable
 fun PreviewSignUpScreen() {
     SignUpScreen(
-        navController = NavController(LocalContext.current),
-        viewModel = hiltViewModel()
+        navController = NavController(LocalContext.current)
     )
 }

@@ -1,4 +1,4 @@
-package io.salario.app.core.customui
+package io.salario.app.core.customui.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -57,6 +57,10 @@ fun PreviewWelcomeCard() {
         verticalArrangement = Arrangement.Top,
         modifier = Modifier.fillMaxHeight()
     ) {
-        WelcomeCard(title = "Welcome", subtitle = "Hello", bgColor = Color.White)
+        WelcomeCard(
+            title = "Welcome",
+            subtitle = "Hello",
+            bgColor = Color.White
+        )
     }
 }

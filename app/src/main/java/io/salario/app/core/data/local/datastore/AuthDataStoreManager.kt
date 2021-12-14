@@ -1,4 +1,4 @@
-package io.salario.app.features.auth.data.local.datastore
+package io.salario.app.core.data.local.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

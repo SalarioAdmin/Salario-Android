@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -14,27 +15,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.salario.app.R
-import io.salario.app.core.customui.WelcomeCard
-import io.salario.app.core.customui.buttons.CornerRoundedButton
-import io.salario.app.core.customui.buttons.CornerRoundedButtonAppearance
-import io.salario.app.core.customui.textfields.EmailTextField
-import io.salario.app.core.customui.textfields.PasswordTextField
-import io.salario.app.core.customui.textfields.rememberTextFieldState
+import io.salario.app.core.customui.composable.*
+import io.salario.app.core.customui.state_holder.TextFieldState
 import io.salario.app.core.navigation.Destination
-import io.salario.app.core.util.getPasswordValidationError
-import io.salario.app.core.util.isValidEmail
-import io.salario.app.features.auth.presentation.viewmodel.AuthViewModel
+import io.salario.app.features.auth.presentation.viewmodel.SignInViewModel
 
 @Composable
-fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
-    val state = viewModel.signInState.value
+fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hiltViewModel()) {
+    val state = viewModel.signInState
 
-    LaunchedEffect(Unit) {
-        if (viewModel.signInState.value.signInSuccess) {
+    // TODO what to do when forgot password success
+
+    // TODO understand how to implement proper navigation once.
+    LaunchedEffect(key1 = true) {
+        if (state.shouldNavigateForward) {
             navController.navigate(Destination.StatusDestination.route) {
                 popUpTo(Destination.SignInDestination.route) {
                     inclusive = true
@@ -43,6 +42,51 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
         }
     }
 
+    SignInScreenContent(
+        isLoading = state.isLoading,
+        errorMessage = state.errorMessage,
+        onDialogDismissed = { state.errorMessage = null },
+        emailInputFieldState = state.emailInputState,
+        passwordInputFieldState = state.passwordInputState,
+        onSignInPressed = {
+            state.apply {
+                emailInputState.validate()
+                passwordInputState.validate()
+
+                if (emailInputState.hasNoError() && passwordInputState.hasNoError()) {
+                    viewModel.onSignIn(emailInputState.text, passwordInputState.text)
+                }
+            }
+        },
+        onForgotPasswordPressed = {
+            state.emailInputState.apply {
+                validate()
+                if (hasNoError()) {
+                    viewModel.onResetPassword(text)
+                }
+            }
+        },
+        onSignUpPressed = {
+            navController.navigate(Destination.SignUpDestination.route) {
+                popUpTo(Destination.SignInDestination.route) {
+                    inclusive = true
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun SignInScreenContent(
+    isLoading: Boolean,
+    errorMessage: String?,
+    emailInputFieldState: TextFieldState,
+    passwordInputFieldState: TextFieldState,
+    onDialogDismissed: () -> Unit,
+    onSignInPressed: () -> Unit,
+    onForgotPasswordPressed: () -> Unit,
+    onSignUpPressed: () -> Unit
+) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxHeight()
@@ -57,7 +101,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
             thirdPartySignInLayout,
             signUpBtn) = createRefs()
 
-        if (state.isLoading) {
+        if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .constrainAs(loadingProgressBar) {
@@ -68,6 +112,26 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
                     })
         }
 
+//        errorMessage?.let {
+//            AlertDialog(
+//                properties = DialogProperties(
+//                    dismissOnBackPress = false,
+//                    dismissOnClickOutside = true
+//                ),
+//                onDismissRequest = { onDialogDismissed.invoke() },
+//                title = { Text(text = "Oops...") },
+//                text = { Text(it) },
+//                confirmButton = { },
+//                dismissButton = {
+//                    CornerRoundedButton(
+//                        text = "Close",
+//                        appearance = CornerRoundedButtonAppearance.Outlined,
+//                        onClick = { onDialogDismissed.invoke() }
+//                    )
+//                },
+//            )
+//        }
+
         WelcomeCard(
             modifier = Modifier.constrainAs(welcomeCard) {
                 top.linkTo(parent.top)
@@ -77,38 +141,18 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
             bgColor = MaterialTheme.colors.background
         )
 
-        val emailState = rememberTextFieldState(
-            initialText = "",
-            validate = { email ->
-                when {
-                    email.isEmpty() || email.isBlank() -> "Email should not be empty"
-                    !isValidEmail(email) -> "Please enter a valid Email address"
-                    else -> null
-                }
-            })
-
         EmailTextField(
             modifier = Modifier.constrainAs(emailTextField) {
                 top.linkTo(welcomeCard.bottom, margin = 42.dp)
             },
-            state = emailState
+            state = emailInputFieldState
         )
-
-        val passwordState = rememberTextFieldState(
-            initialText = "",
-            validate = { password ->
-                if (password.isEmpty() || password.isBlank()) {
-                    "Password should not be empty"
-                } else {
-                    getPasswordValidationError(password)
-                }
-            })
 
         PasswordTextField(
             modifier = Modifier.constrainAs(passwordTextField) {
                 top.linkTo(emailTextField.bottom, margin = 8.dp)
             },
-            state = passwordState
+            state = passwordInputFieldState
         )
 
         CornerRoundedButton(
@@ -120,12 +164,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
             text = "Sign In",
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
-                emailState.validate()
-                passwordState.validate()
-
-                if (emailState.error == null && passwordState.error == null) {
-                    viewModel.onSignIn(emailState.text, passwordState.text)
-                }
+                onSignInPressed()
             }
         )
 
@@ -139,10 +178,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
                     end.linkTo(parent.end)
                 }
                 .clickable {
-                    emailState.validate()
-                    if (emailState.error == null) {
-                        viewModel.onResetPassword(emailState.text)
-                    }
+                    onForgotPasswordPressed()
                 }
         )
 
@@ -155,11 +191,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
             text = "Sign Up",
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {
-                navController.navigate(Destination.SignUpDestination.route) {
-                    popUpTo(Destination.SignInDestination.route) {
-                        inclusive = true
-                    }
-                }
+                onSignUpPressed()
             }
         )
     }
@@ -168,8 +200,5 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
 @Preview
 @Composable
 fun PreviewSignInScreen() {
-    SignInScreen(
-        navController = NavController(LocalContext.current),
-        viewModel = hiltViewModel()
-    )
+    SignInScreen(navController = NavController(LocalContext.current))
 }

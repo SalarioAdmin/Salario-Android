@@ -17,21 +17,45 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.salario.app.R
 import io.salario.app.core.navigation.Destination
-import io.salario.app.features.auth.presentation.viewmodel.AuthViewModel
+import io.salario.app.core.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController, authViewModel: AuthViewModel) {
+    val userAuthState = authViewModel.userAuthState
+
+    LaunchedEffect(key1 = true) {
+        authViewModel.getLoggedInUser()
+    }
+
+    SplashScreenContent(onAnimationFinished = {
+        if (!authViewModel.userAuthState.isLoading) {
+            navController.navigate(
+                if (authViewModel.userAuthState.isConnected) {
+                    Destination.StatusDestination.route
+                } else {
+                    Destination.IntroDestination.route
+                }
+            ) {
+                popUpTo(Destination.SplashDestination.route) {
+                    inclusive = true
+                }
+            }
+        }
+    })
+}
+
+@Composable
+fun SplashScreenContent(onAnimationFinished: () -> Unit) {
     val scaleAnimation = remember {
         Animatable(0.1f)
     }
 
     LaunchedEffect(key1 = true) {
-        authViewModel.getLoggedInUser()
-
         scaleAnimation.animateTo(
             targetValue = 3f,
             animationSpec = tween(
@@ -40,21 +64,8 @@ fun SplashScreen(navController: NavController, authViewModel: AuthViewModel) {
                     OvershootInterpolator(2f).getInterpolation(it)
                 }
             ))
-        delay(300L)
-
-        if (authViewModel.userAuthState.value.isConnected) {
-            navController.navigate(Destination.StatusDestination.route) {
-                popUpTo(Destination.SplashDestination.route) {
-                    inclusive = true
-                }
-            }
-        } else {
-            navController.navigate(Destination.IntroDestination.route) {
-                popUpTo(Destination.SplashDestination.route) {
-                    inclusive = true
-                }
-            }
-        }
+        delay(500L)
+        onAnimationFinished()
     }
 
     Box(
@@ -76,4 +87,10 @@ fun SplashScreen(navController: NavController, authViewModel: AuthViewModel) {
             Modifier.scale(scaleAnimation.value)
         )
     }
+}
+
+@Preview
+@Composable
+fun PreviewSplashScreen() {
+    SplashScreenContent {}
 }

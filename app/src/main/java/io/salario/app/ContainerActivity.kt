@@ -13,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.salario.app.core.navigation.Navigation
 import io.salario.app.core.theme.SalarioTheme
-import io.salario.app.features.auth.presentation.viewmodel.AuthViewModel
+import io.salario.app.core.presentation.viewmodel.AuthViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint

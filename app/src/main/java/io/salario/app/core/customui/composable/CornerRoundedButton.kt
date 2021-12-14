@@ -1,4 +1,4 @@
-package io.salario.app.core.customui.buttons
+package io.salario.app.core.customui.composable
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.salario.app.core.customui.WelcomeCard
 import io.salario.app.core.theme.Purple500
 
 @Composable

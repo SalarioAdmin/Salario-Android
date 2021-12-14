@@ -6,7 +6,7 @@ import dagger.hilt.android.scopes.ActivityScoped
 import io.salario.app.core.domain.model.User
 import io.salario.app.core.util.Resource
 import io.salario.app.core.util.getUser
-import io.salario.app.features.auth.data.local.datastore.AuthDataStoreManager
+import io.salario.app.core.data.local.datastore.AuthDataStoreManager
 import io.salario.app.features.auth.data.remote.api.AuthApi
 import io.salario.app.features.auth.data.remote.dto.TokenPairDto
 import kotlinx.coroutines.flow.Flow
@@ -82,13 +82,21 @@ class AuthRepositoryImpl @Inject constructor(
             emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Authenticate user failed due to ", e)
-            emit(Resource.Error())
+            emit(
+                Resource.Error(
+                    "It looks like a connection error, check your internet connection."
+                )
+            )
         } catch (e: HttpException) {
             Log.e(TAG, "Authenticate user failed due to ", e)
-            emit(Resource.Error())
+            when (e.code()) {
+                400 -> {
+                    emit(Resource.Error("Incorrect Email or password."))
+                }
+            }
         } catch (e: Exception) {
             Log.e(TAG, "Authenticate user failed due to ", e)
-            emit(Resource.Error())
+            emit(Resource.Error("Something went wrong, Please try again."))
         }
     }
 
@@ -171,6 +179,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getConnectedUser(): Flow<Resource<User>> = flow {
+        emit(Resource.Loading())
         val token = dataStoreManager.getAccessToken().first()
         if (token.isNotEmpty()) {
             val user = JWT(token).getUser()

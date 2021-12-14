@@ -5,6 +5,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,26 +14,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.*
 import com.salario.app.R
-import io.salario.app.core.customui.buttons.CornerRoundedButton
-import io.salario.app.core.customui.buttons.CornerRoundedButtonAppearance
-import io.salario.app.core.customui.textfields.EmailTextField
-import io.salario.app.core.customui.textfields.SampleTextField
-import io.salario.app.core.customui.textfields.rememberTextFieldState
+import io.salario.app.core.customui.composable.CornerRoundedButton
+import io.salario.app.core.customui.composable.CornerRoundedButtonAppearance
+import io.salario.app.core.customui.composable.EmailTextField
+import io.salario.app.core.customui.composable.SampleTextField
+import io.salario.app.core.customui.state_holder.TextFieldState
 import io.salario.app.core.navigation.Destination
-import io.salario.app.core.util.isValidEmail
-import io.salario.app.features.auth.presentation.viewmodel.AuthViewModel
+import io.salario.app.features.auth.presentation.viewmodel.EmailValidationViewModel
 
 @Composable
-fun EmailValidationScreen(navController: NavController, viewModel: AuthViewModel) {
-    if (viewModel.emailValidationState.value.shouldNavigateToStatus) {
-        navController.navigate(Destination.StatusDestination.route) {
-            popUpTo(Destination.EmailValidationDestination.route) {
-                inclusive = true
+fun EmailValidationScreen(
+    navController: NavController,
+    viewModel: EmailValidationViewModel = hiltViewModel()
+) {
+    val state = viewModel.emailValidationState
+
+    LaunchedEffect(key1 = true) {
+        if (state.shouldNavigateForward) {
+            navController.navigate(Destination.StatusDestination.route) {
+                popUpTo(Destination.EmailValidationDestination.route) {
+                    inclusive = true
+                }
             }
         }
-        viewModel.emailValidationState.value.shouldNavigateToStatus = false
     }
 
     val composition by rememberLottieComposition(
@@ -44,6 +51,36 @@ fun EmailValidationScreen(navController: NavController, viewModel: AuthViewModel
         iterations = LottieConstants.IterateForever
     )
 
+    EmailValidationScreenContent(
+        isLoading = state.isLoading,
+        lottieComposition = composition,
+        lottieProgress = progress,
+        emailInputFieldState = state.emailInputState,
+        tokenInputFieldState = state.emailInputState
+    ) {
+        state.apply {
+            tokenInputState.validate()
+            emailInputState.validate()
+
+            if (emailInputState.hasNoError() && tokenInputState.hasNoError()) {
+                viewModel.onValidateUserCreation(
+                    email = emailInputState.text,
+                    userCreationValidationToken = tokenInputState.text
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun EmailValidationScreenContent(
+    isLoading: Boolean,
+    lottieComposition: LottieComposition?,
+    lottieProgress: Float,
+    emailInputFieldState: TextFieldState,
+    tokenInputFieldState: TextFieldState,
+    onValidatePressed: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +88,7 @@ fun EmailValidationScreen(navController: NavController, viewModel: AuthViewModel
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (viewModel.emailValidationState.value.isLoading) {
+        if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
 
@@ -74,42 +111,22 @@ fun EmailValidationScreen(navController: NavController, viewModel: AuthViewModel
         )
 
         LottieAnimation(
-            composition = composition,
-            progress = progress,
+            composition = lottieComposition,
+            progress = lottieProgress,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.40f)
         )
 
-        val emailState = rememberTextFieldState(
-            initialText = "",
-            validate = { email ->
-                when {
-                    email.isEmpty() || email.isBlank() -> "Email should not be empty."
-                    !isValidEmail(email) -> "Please enter a valid Email address."
-                    else -> null
-                }
-            })
-
         EmailTextField(
             modifier = Modifier.padding(4.dp),
-            state = emailState
+            state = emailInputFieldState
         )
-
-        val tokenState = rememberTextFieldState(
-            initialText = "",
-            validate = { email ->
-                when {
-                    email.isEmpty() || email.isBlank() -> "Token should not be empty."
-                    else -> null
-                }
-            })
 
         SampleTextField(
             modifier = Modifier.fillMaxWidth(),
             label = "Token",
-            state = tokenState,
-            maxLength = 500
+            state = tokenInputFieldState
         )
 
         CornerRoundedButton(
@@ -117,15 +134,7 @@ fun EmailValidationScreen(navController: NavController, viewModel: AuthViewModel
             text = "Validate email",
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
-                tokenState.validate()
-                emailState.validate()
-
-                if (tokenState.error == null && emailState.error == null) {
-                    viewModel.onValidateUserCreation(
-                        email = emailState.text,
-                        userCreationValidationToken = tokenState.text
-                    )
-                }
+                onValidatePressed()
             }
         )
     }

@@ -7,7 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import io.salario.app.features.auth.presentation.screen.EmailValidationScreen
 import io.salario.app.features.auth.presentation.screen.SignInScreen
 import io.salario.app.features.auth.presentation.screen.SignUpScreen
-import io.salario.app.features.auth.presentation.viewmodel.AuthViewModel
+import io.salario.app.core.presentation.viewmodel.AuthViewModel
 import io.salario.app.features.intro.presentation.screen.IntroScreen
 import io.salario.app.features.intro.presentation.screen.SplashScreen
 import io.salario.app.features.salary_details.presentation.screen.StatusScreen
@@ -25,15 +25,15 @@ fun Navigation(authViewModel: AuthViewModel) {
         }
 
         composable(route = Destination.SignInDestination.route) {
-            SignInScreen(navController = navController, authViewModel)
+            SignInScreen(navController = navController)
         }
 
         composable(route = Destination.SignUpDestination.route) {
-            SignUpScreen(navController = navController, authViewModel)
+            SignUpScreen(navController = navController)
         }
 
         composable(route = Destination.EmailValidationDestination.route) {
-            EmailValidationScreen(navController = navController, authViewModel)
+            EmailValidationScreen(navController = navController)
         }
 
         composable(route = Destination.StatusDestination.route) {

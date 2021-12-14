@@ -8,18 +8,21 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants.IterateForever
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.salario.app.R
-import io.salario.app.core.customui.buttons.CornerRoundedButton
-import io.salario.app.core.customui.buttons.CornerRoundedButtonAppearance
+import io.salario.app.core.customui.composable.CornerRoundedButton
+import io.salario.app.core.customui.composable.CornerRoundedButtonAppearance
 import io.salario.app.core.navigation.Destination
 
 @Composable
@@ -33,6 +36,33 @@ fun IntroScreen(navController: NavController) {
         iterations = IterateForever
     )
 
+    IntroScreenContent(
+        lottieComposition = composition,
+        lottieProgress = progress,
+        onSignInPressed = {
+            navController.navigate(Destination.SignUpDestination.route) {
+                popUpTo(Destination.IntroDestination.route) {
+                    inclusive = true
+                }
+            }
+        },
+        onSignUpPressed = {
+            navController.navigate(Destination.SignInDestination.route) {
+                popUpTo(Destination.IntroDestination.route) {
+                    inclusive = true
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun IntroScreenContent(
+    lottieComposition: LottieComposition?,
+    lottieProgress: Float,
+    onSignInPressed: () -> Unit,
+    onSignUpPressed: () -> Unit
+) {
     ConstraintLayout(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -41,8 +71,8 @@ fun IntroScreen(navController: NavController) {
         val (lottieAnimation, title, subtitle, signUpBtn, signInBtn) = createRefs()
 
         LottieAnimation(
-            composition = composition,
-            progress = progress,
+            composition = lottieComposition,
+            progress = lottieProgress,
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.35f)
@@ -75,11 +105,7 @@ fun IntroScreen(navController: NavController) {
             text = stringResource(id = R.string.intro_sign_up_btn_text),
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
-                navController.navigate(Destination.SignUpDestination.route) {
-                    popUpTo(Destination.IntroDestination.route) {
-                        inclusive = true
-                    }
-                }
+                onSignInPressed()
             },
             modifier = Modifier.constrainAs(signUpBtn) {
                 bottom.linkTo(signInBtn.top, margin = 8.dp)
@@ -89,15 +115,17 @@ fun IntroScreen(navController: NavController) {
             text = stringResource(id = R.string.intro_sign_in_btn_text),
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {
-                navController.navigate(Destination.SignInDestination.route) {
-                    popUpTo(Destination.IntroDestination.route) {
-                        inclusive = true
-                    }
-                }
+                onSignUpPressed()
             },
             modifier = Modifier
                 .constrainAs(signInBtn) {
                     bottom.linkTo(parent.bottom, margin = 16.dp)
                 })
     }
+}
+
+@Preview
+@Composable
+fun PreviewIntroScreen() {
+    IntroScreen(navController = NavController(LocalContext.current))
 }
