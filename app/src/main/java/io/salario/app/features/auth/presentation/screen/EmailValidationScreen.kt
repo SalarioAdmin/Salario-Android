@@ -30,35 +30,33 @@ fun EmailValidationScreen(
     navController: NavController,
     viewModel: EmailValidationViewModel = hiltViewModel()
 ) {
-    val state = viewModel.emailValidationState
-
-    LaunchedEffect(key1 = true) {
-        if (state.shouldNavigateForward) {
-            navController.navigate(Destination.StatusDestination.route) {
-                popUpTo(Destination.EmailValidationDestination.route) {
-                    inclusive = true
+    viewModel.emailValidationState.apply {
+        if (shouldNavigateForward) {
+            LaunchedEffect(key1 = shouldNavigateForward) {
+                navController.navigate(Destination.StatusDestination.route) {
+                    popUpTo(Destination.EmailValidationDestination.route) {
+                        inclusive = true
+                    }
                 }
             }
         }
-    }
 
-    val composition by rememberLottieComposition(
-        spec = LottieCompositionSpec.RawRes(R.raw.lottie_send_email),
-    )
+        val composition by rememberLottieComposition(
+            spec = LottieCompositionSpec.RawRes(R.raw.lottie_send_email),
+        )
 
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever
-    )
+        val progress by animateLottieCompositionAsState(
+            composition = composition,
+            iterations = LottieConstants.IterateForever
+        )
 
-    EmailValidationScreenContent(
-        isLoading = state.isLoading,
-        lottieComposition = composition,
-        lottieProgress = progress,
-        emailInputFieldState = state.emailInputState,
-        tokenInputFieldState = state.emailInputState
-    ) {
-        state.apply {
+        EmailValidationScreenContent(
+            isLoading = isLoading,
+            lottieComposition = composition,
+            lottieProgress = progress,
+            emailInputFieldState = emailInputState,
+            tokenInputFieldState = tokenInputState
+        ) {
             tokenInputState.validate()
             emailInputState.validate()
 

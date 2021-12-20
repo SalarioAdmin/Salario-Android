@@ -1,5 +1,6 @@
 package io.salario.app.features.auth.presentation.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,7 +20,6 @@ class SignInViewModel @Inject constructor(
     private val authenticateUser: AuthenticateUser,
     private val resetPassword: ResetPasswordRequest
 ) : ViewModel() {
-
     var signInState by mutableStateOf(SignInState())
         private set
 
@@ -75,5 +75,10 @@ class SignInViewModel @Inject constructor(
                     }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("yoss", "Sign in VM cleared!")
     }
 }

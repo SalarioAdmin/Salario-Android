@@ -1,57 +1,55 @@
-package io.salario.app.core.presentation.viewmodel
+package io.salario.app.features.splash_screen.presentation.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.salario.app.core.data.local.cache.Cache
 import io.salario.app.core.util.Resource
-import io.salario.app.features.auth.domain.use_case.Logout
+import io.salario.app.features.auth.domain.use_case.GetConnectedUser
 import io.salario.app.features.auth.presentation.state.UserAuthState
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
+@SuppressLint("CustomSplashScreen")
 @HiltViewModel
-class AuthViewModel @Inject constructor(
-    private val logout: Logout
+class SplashScreenViewModel @Inject constructor(
+    val getConnectedUser: GetConnectedUser
 ) : ViewModel() {
 
-    var userAuthState by mutableStateOf(UserAuthState())
+    var authState by mutableStateOf(UserAuthState())
         private set
 
-    private val _eventFlow = MutableSharedFlow<UIEvent>()
-//    val eventFlow = _eventFlow.asSharedFlow()
-
-    fun onLogout() {
-        logout()
+    fun getLoggedInUser() {
+        getConnectedUser()
             .onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        userAuthState = userAuthState.copy(
+                        authState = authState.copy(
                             isLoading = false,
-                            shouldLogout = true
+                            errorMessage = "",
+                            isConnected = true,
+                            userData = result.data
                         )
+                        // TODO check if is a correct way
+                        Cache.user = result.data
                     }
                     is Resource.Loading -> {
-                        userAuthState = userAuthState.copy(
+                        authState = authState.copy(
                             isLoading = true
                         )
                     }
                     is Resource.Error -> {
-                        userAuthState = userAuthState.copy(
+                        authState = authState.copy(
                             errorMessage = "Error",
                             isLoading = false
                         )
-                        _eventFlow.emit(UIEvent.ShowSnackbar("Error"))
                     }
                 }
             }.launchIn(viewModelScope)
-    }
-
-    sealed class UIEvent {
-        data class ShowSnackbar(val message: String) : UIEvent()
     }
 }

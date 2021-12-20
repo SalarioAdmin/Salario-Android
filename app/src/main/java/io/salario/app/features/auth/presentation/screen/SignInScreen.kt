@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -15,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -27,53 +25,48 @@ import io.salario.app.features.auth.presentation.viewmodel.SignInViewModel
 
 @Composable
 fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hiltViewModel()) {
-    val state = viewModel.signInState
-
-    // TODO what to do when forgot password success
-
-    // TODO understand how to implement proper navigation once.
-    LaunchedEffect(key1 = true) {
-        if (state.shouldNavigateForward) {
-            navController.navigate(Destination.StatusDestination.route) {
-                popUpTo(Destination.SignInDestination.route) {
-                    inclusive = true
+    viewModel.signInState.apply {
+        if (shouldNavigateForward) {
+            LaunchedEffect(key1 = shouldNavigateForward) {
+                navController.navigate(Destination.StatusDestination.route) {
+                    popUpTo(Destination.SignInDestination.route) {
+                        inclusive = true
+                    }
                 }
             }
         }
-    }
 
-    SignInScreenContent(
-        isLoading = state.isLoading,
-        errorMessage = state.errorMessage,
-        onDialogDismissed = { state.errorMessage = null },
-        emailInputFieldState = state.emailInputState,
-        passwordInputFieldState = state.passwordInputState,
-        onSignInPressed = {
-            state.apply {
+        SignInScreenContent(
+            isLoading = isLoading,
+            errorMessage = errorMessage,
+            onDialogDismissed = { errorMessage = null },
+            emailInputFieldState = emailInputState,
+            passwordInputFieldState = passwordInputState,
+            onSignInPressed = {
                 emailInputState.validate()
                 passwordInputState.validate()
 
                 if (emailInputState.hasNoError() && passwordInputState.hasNoError()) {
                     viewModel.onSignIn(emailInputState.text, passwordInputState.text)
                 }
-            }
-        },
-        onForgotPasswordPressed = {
-            state.emailInputState.apply {
-                validate()
-                if (hasNoError()) {
-                    viewModel.onResetPassword(text)
+            },
+            onForgotPasswordPressed = {
+                emailInputState.apply {
+                    validate()
+                    if (hasNoError()) {
+                        viewModel.onResetPassword(text)
+                    }
+                }
+            },
+            onSignUpPressed = {
+                navController.navigate(Destination.SignUpDestination.route) {
+                    popUpTo(Destination.SignInDestination.route) {
+                        inclusive = true
+                    }
                 }
             }
-        },
-        onSignUpPressed = {
-            navController.navigate(Destination.SignUpDestination.route) {
-                popUpTo(Destination.SignInDestination.route) {
-                    inclusive = true
-                }
-            }
-        }
-    )
+        )
+    }
 }
 
 @Composable

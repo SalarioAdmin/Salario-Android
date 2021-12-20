@@ -59,6 +59,6 @@ interface AuthApi {
     ): Response<Unit>
 
     companion object {
-        const val BASE_URL = "http://192.168.2.79:3000/"
+        const val BASE_URL = "http://192.168.2.77:3000/"
     }
 }

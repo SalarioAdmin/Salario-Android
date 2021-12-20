@@ -4,20 +4,20 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.salario.app.features.auth.presentation.IntroScreen
 import io.salario.app.features.auth.presentation.screen.EmailValidationScreen
 import io.salario.app.features.auth.presentation.screen.SignInScreen
 import io.salario.app.features.auth.presentation.screen.SignUpScreen
-import io.salario.app.core.presentation.viewmodel.AuthViewModel
-import io.salario.app.features.intro.presentation.screen.IntroScreen
-import io.salario.app.features.intro.presentation.screen.SplashScreen
 import io.salario.app.features.salary_details.presentation.screen.StatusScreen
+import io.salario.app.features.splash_screen.presentation.screen.SplashScreen
 
 @Composable
-fun Navigation(authViewModel: AuthViewModel) {
+fun Navigation() {
     val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination = Destination.SplashDestination.route) {
         composable(route = Destination.SplashDestination.route) {
-            SplashScreen(navController = navController, authViewModel)
+            SplashScreen(navController = navController)
         }
 
         composable(route = Destination.IntroDestination.route) {
@@ -37,7 +37,7 @@ fun Navigation(authViewModel: AuthViewModel) {
         }
 
         composable(route = Destination.StatusDestination.route) {
-            StatusScreen(navController = navController, authViewModel)
+            StatusScreen(navController = navController)
         }
     }
 }

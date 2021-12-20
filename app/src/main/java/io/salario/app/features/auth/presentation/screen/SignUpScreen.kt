@@ -22,27 +22,24 @@ import io.salario.app.features.auth.presentation.viewmodel.SignUpViewModel
 
 @Composable
 fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hiltViewModel()) {
-    val state = viewModel.signUpState
-
-    // TODO understand how to implement proper navigation once.
-    LaunchedEffect(key1 = true) {
-        if (state.shouldNavigateForward) {
-            navController.navigate(Destination.EmailValidationDestination.route) {
-                popUpTo(Destination.SignUpDestination.route) {
-                    inclusive = true
+    viewModel.signUpState.apply {
+        if (shouldNavigateForward) {
+            LaunchedEffect(key1 = shouldNavigateForward) {
+                navController.navigate(Destination.EmailValidationDestination.route) {
+                    popUpTo(Destination.SignUpDestination.route) {
+                        inclusive = true
+                    }
                 }
             }
         }
-    }
 
-    SignUpScreenContent(
-        isLoading = state.isLoading,
-        firstNameInputFieldState = state.firstNameInputState,
-        lastNameInputFieldState = state.lastNameInputState,
-        emailInputFieldState = state.emailInputState,
-        passwordInputFieldState = state.passwordInputState,
-        onSignUpPressed = {
-            state.apply {
+        SignUpScreenContent(
+            isLoading = isLoading,
+            firstNameInputFieldState = firstNameInputState,
+            lastNameInputFieldState = lastNameInputState,
+            emailInputFieldState = emailInputState,
+            passwordInputFieldState = passwordInputState,
+            onSignUpPressed = {
                 firstNameInputState.validate()
                 lastNameInputState.validate()
                 emailInputState.validate()
@@ -60,16 +57,16 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
                         passwordInputState.text
                     )
                 }
-            }
-        },
-        onSignInPressed = {
-            navController.navigate(Destination.SignInDestination.route) {
-                popUpTo(Destination.SignUpDestination.route) {
-                    inclusive = true
+            },
+            onSignInPressed = {
+                navController.navigate(Destination.SignInDestination.route) {
+                    popUpTo(Destination.SignUpDestination.route) {
+                        inclusive = true
+                    }
                 }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable

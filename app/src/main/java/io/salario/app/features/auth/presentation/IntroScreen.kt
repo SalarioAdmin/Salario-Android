@@ -1,4 +1,4 @@
-package io.salario.app.features.intro.presentation.screen
+package io.salario.app.features.auth.presentation
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,18 +40,10 @@ fun IntroScreen(navController: NavController) {
         lottieComposition = composition,
         lottieProgress = progress,
         onSignInPressed = {
-            navController.navigate(Destination.SignUpDestination.route) {
-                popUpTo(Destination.IntroDestination.route) {
-                    inclusive = true
-                }
-            }
+            navController.navigate(Destination.SignUpDestination.route)
         },
         onSignUpPressed = {
-            navController.navigate(Destination.SignInDestination.route) {
-                popUpTo(Destination.IntroDestination.route) {
-                    inclusive = true
-                }
-            }
+            navController.navigate(Destination.SignInDestination.route)
         }
     )
 }

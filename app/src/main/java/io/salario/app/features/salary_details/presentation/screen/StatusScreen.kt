@@ -9,29 +9,31 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import io.salario.app.core.data.local.cache.Cache
 import io.salario.app.core.navigation.Destination
 import io.salario.app.core.presentation.viewmodel.AuthViewModel
 
 @Composable
-fun StatusScreen(navController: NavController, authViewModel: AuthViewModel) {
-    val state = authViewModel.userAuthState
-
-    LaunchedEffect(key1 = true) {
-        if (state.shouldLogout) {
-            navController.navigate(Destination.IntroDestination.route) {
-                popUpTo(Destination.StatusDestination.route) {
-                    inclusive = true
+fun StatusScreen(navController: NavController, authViewModel: AuthViewModel = hiltViewModel()) {
+    authViewModel.userAuthState.apply {
+        if (shouldLogout) {
+            LaunchedEffect(shouldLogout) {
+                navController.navigate(Destination.IntroDestination.route) {
+                    popUpTo(Destination.StatusDestination.route) {
+                        inclusive = true
+                    }
                 }
             }
         }
-    }
 
-    StatusScreenContent(
-        isLoading = state.isLoading,
-        name = "${state.userData?.firstName} ${state.userData?.lastName}"
-    ) {
-        authViewModel.onLogout()
+        StatusScreenContent(
+            isLoading = isLoading,
+            name = "${Cache.user?.firstName} ${Cache.user?.lastName}"
+        ) {
+            authViewModel.onLogout()
+        }
     }
 }
 

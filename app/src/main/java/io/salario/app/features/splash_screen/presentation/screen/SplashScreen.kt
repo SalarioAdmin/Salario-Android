@@ -1,4 +1,4 @@
-package io.salario.app.features.intro.presentation.screen
+package io.salario.app.features.splash_screen.presentation.screen
 
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
@@ -18,35 +18,38 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.salario.app.R
 import io.salario.app.core.navigation.Destination
-import io.salario.app.core.presentation.viewmodel.AuthViewModel
+import io.salario.app.features.splash_screen.presentation.viewmodel.SplashScreenViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController, authViewModel: AuthViewModel) {
-    val userAuthState = authViewModel.userAuthState
-
-    LaunchedEffect(key1 = true) {
-        authViewModel.getLoggedInUser()
-    }
-
-    SplashScreenContent(onAnimationFinished = {
-        if (!authViewModel.userAuthState.isLoading) {
-            navController.navigate(
-                if (authViewModel.userAuthState.isConnected) {
-                    Destination.StatusDestination.route
-                } else {
-                    Destination.IntroDestination.route
-                }
-            ) {
-                popUpTo(Destination.SplashDestination.route) {
-                    inclusive = true
+fun SplashScreen(navController: NavController, viewModel: SplashScreenViewModel = hiltViewModel()) {
+    val onAnimationFinishedCallback = remember {
+        {
+            if (!viewModel.authState.isLoading) {
+                navController.navigate(
+                    if (viewModel.authState.isConnected) {
+                        Destination.StatusDestination.route
+                    } else {
+                        Destination.IntroDestination.route
+                    }
+                ) {
+                    popUpTo(Destination.SplashDestination.route) {
+                        inclusive = true
+                    }
                 }
             }
         }
-    })
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.getLoggedInUser()
+    }
+
+    SplashScreenContent(onAnimationFinished = onAnimationFinishedCallback)
 }
 
 @Composable
