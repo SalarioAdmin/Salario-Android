@@ -33,7 +33,7 @@ fun EmailValidationScreen(
     viewModel.emailValidationState.apply {
         if (shouldNavigateForward) {
             LaunchedEffect(key1 = shouldNavigateForward) {
-                navController.navigate(Destination.StatusDestination.route) {
+                navController.navigate(Destination.SignInDestination.route) {
                     popUpTo(Destination.EmailValidationDestination.route) {
                         inclusive = true
                     }
