@@ -42,7 +42,7 @@ fun EmailValidationScreen(
         }
 
         val composition by rememberLottieComposition(
-            spec = LottieCompositionSpec.RawRes(R.raw.lottie_send_email),
+            spec = LottieCompositionSpec.RawRes(R.raw.send_email_animation),
         )
 
         val progress by animateLottieCompositionAsState(
@@ -128,7 +128,9 @@ fun EmailValidationScreenContent(
         )
 
         CornerRoundedButton(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             text = "Validate email",
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {

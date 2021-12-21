@@ -28,7 +28,7 @@ import io.salario.app.core.navigation.Destination
 @Composable
 fun IntroScreen(navController: NavController) {
     val composition by rememberLottieComposition(
-        spec = LottieCompositionSpec.RawRes(R.raw.welcome_lottie),
+        spec = LottieCompositionSpec.RawRes(R.raw.welcome_animation),
     )
 
     val progress by animateLottieCompositionAsState(
@@ -99,7 +99,9 @@ fun IntroScreenContent(
             onClick = {
                 onSignInPressed()
             },
-            modifier = Modifier.constrainAs(signUpBtn) {
+            modifier = Modifier
+                .fillMaxWidth()
+                .constrainAs(signUpBtn) {
                 bottom.linkTo(signInBtn.top, margin = 8.dp)
             })
 
@@ -110,6 +112,7 @@ fun IntroScreenContent(
                 onSignUpPressed()
             },
             modifier = Modifier
+                .fillMaxWidth()
                 .constrainAs(signInBtn) {
                     bottom.linkTo(parent.bottom, margin = 16.dp)
                 })

@@ -1,4 +1,4 @@
-package io.salario.app.core.theme
+package io.salario.app.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

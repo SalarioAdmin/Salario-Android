@@ -3,6 +3,7 @@ package io.salario.app.features.auth.presentation.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -21,6 +22,7 @@ import com.salario.app.R
 import io.salario.app.core.customui.composable.*
 import io.salario.app.core.customui.state_holder.TextFieldState
 import io.salario.app.core.navigation.Destination
+import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.features.auth.presentation.viewmodel.SignInViewModel
 
 @Composable
@@ -28,7 +30,7 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hilt
     viewModel.signInState.apply {
         if (shouldNavigateForward) {
             LaunchedEffect(key1 = shouldNavigateForward) {
-                navController.navigate(Destination.StatusDestination.route) {
+                navController.navigate(FEATURES_GRAPH_ROUTE) {
                     popUpTo(Destination.SignInDestination.route) {
                         inclusive = true
                     }
@@ -105,26 +107,6 @@ fun SignInScreenContent(
                     })
         }
 
-//        errorMessage?.let {
-//            AlertDialog(
-//                properties = DialogProperties(
-//                    dismissOnBackPress = false,
-//                    dismissOnClickOutside = true
-//                ),
-//                onDismissRequest = { onDialogDismissed.invoke() },
-//                title = { Text(text = "Oops...") },
-//                text = { Text(it) },
-//                confirmButton = { },
-//                dismissButton = {
-//                    CornerRoundedButton(
-//                        text = "Close",
-//                        appearance = CornerRoundedButtonAppearance.Outlined,
-//                        onClick = { onDialogDismissed.invoke() }
-//                    )
-//                },
-//            )
-//        }
-
         WelcomeCard(
             modifier = Modifier.constrainAs(welcomeCard) {
                 top.linkTo(parent.top)
@@ -150,10 +132,11 @@ fun SignInScreenContent(
 
         CornerRoundedButton(
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
                 .constrainAs(signInBtn) {
                     top.linkTo(passwordTextField.bottom, margin = 16.dp)
-                }
-                .padding(horizontal = 16.dp),
+                },
             text = "Sign In",
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
@@ -177,10 +160,11 @@ fun SignInScreenContent(
 
         CornerRoundedButton(
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
                 .constrainAs(signUpBtn) {
                     bottom.linkTo(parent.bottom, margin = 16.dp)
-                }
-                .padding(horizontal = 16.dp),
+                },
             text = "Sign Up",
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {

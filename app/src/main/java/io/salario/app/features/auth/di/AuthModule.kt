@@ -9,7 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.salario.app.core.util.network.AuthInterceptor
-import io.salario.app.core.data.local.datastore.AuthDataStoreManager
+import io.salario.app.features.auth.data.local.datastore.AuthDataStoreManager
 import io.salario.app.features.auth.data.remote.api.AuthApi
 import io.salario.app.features.auth.domain.repository.AuthRepository
 import io.salario.app.features.auth.domain.repository.AuthRepositoryImpl

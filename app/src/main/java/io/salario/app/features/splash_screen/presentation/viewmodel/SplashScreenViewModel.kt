@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.salario.app.core.data.local.cache.Cache
 import io.salario.app.core.util.Resource
 import io.salario.app.features.auth.domain.use_case.GetConnectedUser
 import io.salario.app.features.auth.presentation.state.UserAuthState
@@ -35,8 +34,6 @@ class SplashScreenViewModel @Inject constructor(
                             isConnected = true,
                             userData = result.data
                         )
-                        // TODO check if is a correct way
-                        Cache.user = result.data
                     }
                     is Resource.Loading -> {
                         authState = authState.copy(

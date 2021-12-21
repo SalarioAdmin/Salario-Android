@@ -1,6 +1,6 @@
 package io.salario.app.features.auth.domain.repository
 
-import io.salario.app.core.domain.model.User
+import io.salario.app.core.model.User
 import io.salario.app.core.util.Resource
 import io.salario.app.features.auth.data.remote.dto.TokenPairDto
 import kotlinx.coroutines.flow.Flow

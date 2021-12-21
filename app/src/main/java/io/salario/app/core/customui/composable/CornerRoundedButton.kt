@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.salario.app.core.theme.Purple500
+import io.salario.app.theme.Purple500
 
 @Composable
 fun CornerRoundedButton(
@@ -29,7 +29,7 @@ fun CornerRoundedButton(
                 colors = ButtonDefaults.buttonColors(
                     contentColor = Color.White
                 ),
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
             ) {
                 Text(
                     text = text,
@@ -48,13 +48,11 @@ fun CornerRoundedButton(
                     contentColor = MaterialTheme.colors.onPrimary
                 ),
                 modifier = modifier
-                    .fillMaxWidth()
             ) {
                 Text(
                     text = text,
                     style = MaterialTheme.typography.button,
                     modifier = Modifier.padding(8.dp)
-
                 )
             }
         }
@@ -70,6 +68,9 @@ sealed class CornerRoundedButtonAppearance {
 @Composable
 fun PreviewCornerRoundedButton() {
     Box(contentAlignment = Alignment.Center) {
-        WelcomeCard(title = "Welcome", subtitle = "Hello", bgColor = Color.White)
+        CornerRoundedButton(
+            text = "Welcome",
+            appearance = CornerRoundedButtonAppearance.Filled,
+            onClick = {})
     }
 }

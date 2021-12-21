@@ -3,10 +3,10 @@ package io.salario.app.features.auth.domain.repository
 import android.util.Log
 import com.auth0.android.jwt.JWT
 import dagger.hilt.android.scopes.ActivityScoped
-import io.salario.app.core.domain.model.User
+import io.salario.app.core.model.User
 import io.salario.app.core.util.Resource
 import io.salario.app.core.util.getUser
-import io.salario.app.core.data.local.datastore.AuthDataStoreManager
+import io.salario.app.features.auth.data.local.datastore.AuthDataStoreManager
 import io.salario.app.features.auth.data.remote.api.AuthApi
 import io.salario.app.features.auth.data.remote.dto.TokenPairDto
 import kotlinx.coroutines.flow.Flow

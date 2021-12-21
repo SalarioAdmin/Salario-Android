@@ -1,26 +1,26 @@
-package io.salario.app.core.navigation
+package io.salario.app.core.navigation.nav_graph
 
-import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import io.salario.app.core.navigation.AUTH_GRAPH_ROUTE
+import io.salario.app.core.navigation.Destination
 import io.salario.app.features.auth.presentation.IntroScreen
 import io.salario.app.features.auth.presentation.screen.EmailValidationScreen
 import io.salario.app.features.auth.presentation.screen.SignInScreen
 import io.salario.app.features.auth.presentation.screen.SignUpScreen
-import io.salario.app.features.salary_details.presentation.screen.StatusScreen
-import io.salario.app.features.splash_screen.presentation.screen.SplashScreen
 
-@Composable
-fun Navigation() {
-    val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = Destination.SplashDestination.route) {
-        composable(route = Destination.SplashDestination.route) {
-            SplashScreen(navController = navController)
-        }
-
+fun NavGraphBuilder.authNavGraph(
+    navController: NavController,
+    applyVisibilityConfig: (() -> Unit)? = null
+) {
+    navigation(
+        startDestination = Destination.IntroDestination.route,
+        route = AUTH_GRAPH_ROUTE
+    ) {
         composable(route = Destination.IntroDestination.route) {
+            applyVisibilityConfig?.invoke()
             IntroScreen(navController = navController)
         }
 
@@ -34,10 +34,6 @@ fun Navigation() {
 
         composable(route = Destination.EmailValidationDestination.route) {
             EmailValidationScreen(navController = navController)
-        }
-
-        composable(route = Destination.StatusDestination.route) {
-            StatusScreen(navController = navController)
         }
     }
 }

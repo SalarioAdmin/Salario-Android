@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.salario.app.R
+import io.salario.app.core.navigation.AUTH_GRAPH_ROUTE
+import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.core.navigation.Destination
 import io.salario.app.features.splash_screen.presentation.viewmodel.SplashScreenViewModel
 import kotlinx.coroutines.delay
@@ -32,9 +34,9 @@ fun SplashScreen(navController: NavController, viewModel: SplashScreenViewModel 
             if (!viewModel.authState.isLoading) {
                 navController.navigate(
                     if (viewModel.authState.isConnected) {
-                        Destination.StatusDestination.route
+                        FEATURES_GRAPH_ROUTE
                     } else {
-                        Destination.IntroDestination.route
+                        AUTH_GRAPH_ROUTE
                     }
                 ) {
                     popUpTo(Destination.SplashDestination.route) {

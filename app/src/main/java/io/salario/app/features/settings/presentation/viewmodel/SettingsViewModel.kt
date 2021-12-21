@@ -1,4 +1,4 @@
-package io.salario.app.core.presentation.viewmodel
+package io.salario.app.features.settings.presentation.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,49 +9,40 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.salario.app.core.util.Resource
 import io.salario.app.features.auth.domain.use_case.Logout
 import io.salario.app.features.auth.presentation.state.UserAuthState
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(
+class SettingsViewModel @Inject constructor(
     private val logout: Logout
 ) : ViewModel() {
 
-    var userAuthState by mutableStateOf(UserAuthState())
+    var authState by mutableStateOf(UserAuthState())
         private set
-
-    private val _eventFlow = MutableSharedFlow<UIEvent>()
-//    val eventFlow = _eventFlow.asSharedFlow()
 
     fun onLogout() {
         logout()
             .onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        userAuthState = userAuthState.copy(
+                        authState = authState.copy(
                             isLoading = false,
                             shouldLogout = true
                         )
                     }
                     is Resource.Loading -> {
-                        userAuthState = userAuthState.copy(
+                        authState = authState.copy(
                             isLoading = true
                         )
                     }
                     is Resource.Error -> {
-                        userAuthState = userAuthState.copy(
+                        authState = authState.copy(
                             errorMessage = "Error",
                             isLoading = false
                         )
-                        _eventFlow.emit(UIEvent.ShowSnackbar("Error"))
                     }
                 }
             }.launchIn(viewModelScope)
-    }
-
-    sealed class UIEvent {
-        data class ShowSnackbar(val message: String) : UIEvent()
     }
 }

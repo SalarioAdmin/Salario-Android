@@ -149,10 +149,11 @@ fun SignUpScreenContent(
 
         CornerRoundedButton(
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
                 .constrainAs(signUpBtn) {
                     top.linkTo(passwordTextField.bottom, margin = 16.dp)
-                }
-                .padding(horizontal = 16.dp),
+                },
             text = "Sign Up",
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
@@ -162,10 +163,11 @@ fun SignUpScreenContent(
 
         CornerRoundedButton(
             modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
                 .constrainAs(signInBtn) {
                     bottom.linkTo(parent.bottom, margin = 16.dp)
-                }
-                .padding(horizontal = 16.dp),
+                },
             text = "Sign In",
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {
