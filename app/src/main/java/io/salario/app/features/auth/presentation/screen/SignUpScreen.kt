@@ -85,8 +85,7 @@ fun SignUpScreenContent(
             .fillMaxHeight()
             .background(MaterialTheme.colors.background)
     ) {
-        val (loadingProgressBar,
-            welcomeCard,
+        val (welcomeCard,
             emailTextField,
             nameLayout,
             passwordTextField,
@@ -95,12 +94,7 @@ fun SignUpScreenContent(
             signInBtn) = createRefs()
 
         if (isLoading) {
-            CircularProgressIndicator(modifier = Modifier.constrainAs(loadingProgressBar) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            })
+            LoadingDialog()
         }
 
         WelcomeCard(

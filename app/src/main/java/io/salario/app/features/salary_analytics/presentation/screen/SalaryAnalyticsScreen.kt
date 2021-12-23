@@ -29,7 +29,7 @@ fun SalaryAnalyticsScreen(navController: NavController) {
             showExitDialog = false
         },
         onExitPressed = {
-            navController.popBackStack()
+            // TODO fire exit event to the activity
         }
     )
 }
