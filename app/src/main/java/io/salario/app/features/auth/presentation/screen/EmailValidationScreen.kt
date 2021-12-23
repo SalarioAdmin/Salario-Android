@@ -17,11 +17,11 @@ import androidx.navigation.NavController
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.*
 import com.salario.app.R
-import io.salario.app.core.customui.composable.CornerRoundedButton
-import io.salario.app.core.customui.composable.CornerRoundedButtonAppearance
-import io.salario.app.core.customui.composable.EmailTextField
-import io.salario.app.core.customui.composable.SampleTextField
-import io.salario.app.core.customui.state_holder.TextFieldState
+import io.salario.app.core.shared_ui.composable.CornerRoundedButton
+import io.salario.app.core.shared_ui.composable.CornerRoundedButtonAppearance
+import io.salario.app.core.shared_ui.composable.EmailTextField
+import io.salario.app.core.shared_ui.composable.SampleTextField
+import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.core.navigation.Destination
 import io.salario.app.features.auth.presentation.viewmodel.EmailValidationViewModel
 

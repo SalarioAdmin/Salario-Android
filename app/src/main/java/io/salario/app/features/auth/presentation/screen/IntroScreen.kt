@@ -1,4 +1,4 @@
-package io.salario.app.features.auth.presentation
+package io.salario.app.features.auth.presentation.screen
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,9 +21,9 @@ import com.airbnb.lottie.compose.LottieConstants.IterateForever
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.salario.app.R
-import io.salario.app.core.customui.composable.CornerRoundedButton
-import io.salario.app.core.customui.composable.CornerRoundedButtonAppearance
 import io.salario.app.core.navigation.Destination
+import io.salario.app.core.shared_ui.composable.CornerRoundedButton
+import io.salario.app.core.shared_ui.composable.CornerRoundedButtonAppearance
 
 @Composable
 fun IntroScreen(navController: NavController) {

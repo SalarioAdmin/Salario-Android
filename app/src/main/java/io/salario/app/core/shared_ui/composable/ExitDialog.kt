@@ -1,4 +1,4 @@
-package io.salario.app.core.customui.composable
+package io.salario.app.core.shared_ui.composable
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,7 +23,7 @@ import com.salario.app.R
 @Composable
 fun ExitAlertDialog(onExitPressed: () -> Unit, onDismissPressed: () -> Unit) {
     val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.exit_door_animation)
+        LottieCompositionSpec.RawRes(R.raw.cycling_animation)
     )
 
     AlertDialog(

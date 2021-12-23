@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import io.salario.app.core.customui.composable.ExitAlertDialog
+import io.salario.app.core.shared_ui.composable.ExitAlertDialog
 
 @ExperimentalComposeUiApi
 @Composable

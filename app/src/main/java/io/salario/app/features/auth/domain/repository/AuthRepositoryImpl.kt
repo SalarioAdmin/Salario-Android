@@ -4,6 +4,7 @@ import android.util.Log
 import com.auth0.android.jwt.JWT
 import dagger.hilt.android.scopes.ActivityScoped
 import io.salario.app.core.model.User
+import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource
 import io.salario.app.core.util.getUser
 import io.salario.app.features.auth.data.local.datastore.AuthDataStoreManager
@@ -44,7 +45,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun validateUserCreation(
+    override fun validateUserCreation( // TODO remove it
         email: String,
         userCreationValidationToken: String
     ): Flow<Resource<Unit>> = flow {
@@ -84,20 +85,33 @@ class AuthRepositoryImpl @Inject constructor(
             Log.e(TAG, "Authenticate user failed due to ", e)
             emit(
                 Resource.Error(
-                    "It looks like a connection error, check your internet connection."
+                    "Looks like a connection error.\nPlease check your internet connection.",
+                    type = ErrorType.IO
                 )
             )
         } catch (e: HttpException) {
             Log.e(TAG, "Authenticate user failed due to ", e)
             when (e.code()) {
                 400 -> {
-                    emit(Resource.Error("Incorrect Email or password."))
+                    emit(Resource.Error(
+                        "Incorrect Email or Password.",
+                        type = ErrorType.WrongInput
+                    ))
                 }
+
+                500 -> {
+                    emit(Resource.Error(
+                        "Something went wrong.\nPlease try again.",
+                        type = ErrorType.ServerError
+                    ))
+            }
             }
         } catch (e: Exception) {
             Log.e(TAG, "Authenticate user failed due to ", e)
-            emit(Resource.Error("Something went wrong, Please try again."))
-        }
+            emit(Resource.Error(
+                "Something went wrong.\nPlease try again.",
+                type = ErrorType.ServerError
+            ))        }
     }
 
     override fun resetPasswordRequest(email: String): Flow<Resource<Unit>> = flow {

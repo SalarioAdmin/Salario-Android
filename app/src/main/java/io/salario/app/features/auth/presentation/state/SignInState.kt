@@ -1,13 +1,16 @@
 package io.salario.app.features.auth.presentation.state
 
-import io.salario.app.core.customui.state_holder.TextFieldState
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import io.salario.app.core.model.UIError
+import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.core.util.getPasswordValidationError
 import io.salario.app.core.util.isValidEmail
 
 data class SignInState(
     val isLoading: Boolean = false,
     val shouldNavigateForward: Boolean = false,
-    var errorMessage: String? = null,
     val emailInputState: TextFieldState = TextFieldState(
         validate = { email ->
             when {
@@ -24,4 +27,6 @@ data class SignInState(
                 getPasswordValidationError(password)
             }
         })
-)
+) {
+    var error by mutableStateOf(UIError())
+}

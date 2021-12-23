@@ -1,4 +1,4 @@
-package io.salario.app.core.customui.composable
+package io.salario.app.core.shared_ui.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

@@ -1,5 +1,6 @@
 package io.salario.app.features.auth.presentation.screen
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -9,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -18,17 +20,22 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.salario.app.R
-import io.salario.app.core.customui.composable.*
-import io.salario.app.core.customui.state_holder.TextFieldState
+import io.salario.app.core.model.UIError
+import io.salario.app.core.shared_ui.composable.*
+import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.core.navigation.Destination
 import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.features.auth.presentation.viewmodel.SignInViewModel
+import kotlinx.coroutines.delay
 
+@ExperimentalComposeUiApi
 @Composable
 fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hiltViewModel()) {
     viewModel.signInState.apply {
         if (shouldNavigateForward) {
+            WelcomeDialog()
             LaunchedEffect(key1 = shouldNavigateForward) {
+                delay(3000L)
                 navController.navigate(FEATURES_GRAPH_ROUTE) {
                     popUpTo(Destination.SignInDestination.route) {
                         inclusive = true
@@ -39,8 +46,10 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hilt
 
         SignInScreenContent(
             isLoading = isLoading,
-            errorMessage = errorMessage,
-            onDialogDismissed = { errorMessage = null },
+            error = error,
+            onErrorDialogDismiss = {
+                viewModel.clearError()
+            },
             emailInputFieldState = emailInputState,
             passwordInputFieldState = passwordInputState,
             onSignInPressed = {
@@ -70,13 +79,14 @@ fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hilt
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun SignInScreenContent(
     isLoading: Boolean,
-    errorMessage: String?,
+    error: UIError,
+    onErrorDialogDismiss: () -> Unit,
     emailInputFieldState: TextFieldState,
     passwordInputFieldState: TextFieldState,
-    onDialogDismissed: () -> Unit,
     onSignInPressed: () -> Unit,
     onForgotPasswordPressed: () -> Unit,
     onSignUpPressed: () -> Unit
@@ -95,7 +105,11 @@ fun SignInScreenContent(
             signUpBtn) = createRefs()
 
         if (isLoading) {
-            LoadingDialog()
+            LoadingDialog(DialogLoadingType.Identification)
+        }
+
+        if (error.isActive) {
+            InfoDialog(error.dialogType, error.text, onErrorDialogDismiss)
         }
 
         WelcomeCard(
@@ -165,6 +179,7 @@ fun SignInScreenContent(
     }
 }
 
+@ExperimentalComposeUiApi
 @Preview
 @Composable
 fun PreviewSignInScreen() {

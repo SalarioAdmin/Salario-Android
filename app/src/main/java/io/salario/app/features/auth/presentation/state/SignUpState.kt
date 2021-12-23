@@ -1,6 +1,6 @@
 package io.salario.app.features.auth.presentation.state
 
-import io.salario.app.core.customui.state_holder.TextFieldState
+import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.core.util.getPasswordValidationError
 import io.salario.app.core.util.isValidEmail
 

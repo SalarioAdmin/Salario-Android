@@ -1,4 +1,4 @@
-package io.salario.app.core.customui.state_holder
+package io.salario.app.core.shared_ui.state_holder
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

@@ -1,4 +1,4 @@
-package io.salario.app.core.customui.composable
+package io.salario.app.core.shared_ui.composable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.salario.app.core.customui.state_holder.TextFieldState
+import io.salario.app.core.shared_ui.state_holder.TextFieldState
 
 @Composable
 fun PasswordTextField(

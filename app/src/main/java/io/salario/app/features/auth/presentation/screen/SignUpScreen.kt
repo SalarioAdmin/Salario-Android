@@ -2,10 +2,10 @@ package io.salario.app.features.auth.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -15,11 +15,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.salario.app.R
-import io.salario.app.core.customui.composable.*
-import io.salario.app.core.customui.state_holder.TextFieldState
+import io.salario.app.core.shared_ui.composable.*
+import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.core.navigation.Destination
 import io.salario.app.features.auth.presentation.viewmodel.SignUpViewModel
 
+@ExperimentalComposeUiApi
 @Composable
 fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hiltViewModel()) {
     viewModel.signUpState.apply {
@@ -69,6 +70,7 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun SignUpScreenContent(
     isLoading: Boolean,
@@ -94,7 +96,7 @@ fun SignUpScreenContent(
             signInBtn) = createRefs()
 
         if (isLoading) {
-            LoadingDialog()
+            LoadingDialog(DialogLoadingType.General)
         }
 
         WelcomeCard(
@@ -171,6 +173,7 @@ fun SignUpScreenContent(
     }
 }
 
+@ExperimentalComposeUiApi
 @Preview
 @Composable
 fun PreviewSignUpScreen() {
