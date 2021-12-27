@@ -8,7 +8,6 @@ import androidx.navigation.navigation
 import io.salario.app.core.navigation.AUTH_GRAPH_ROUTE
 import io.salario.app.core.navigation.Destination
 import io.salario.app.features.auth.presentation.screen.IntroScreen
-import io.salario.app.features.auth.presentation.screen.EmailValidationScreen
 import io.salario.app.features.auth.presentation.screen.SignInScreen
 import io.salario.app.features.auth.presentation.screen.SignUpScreen
 
@@ -32,10 +31,6 @@ fun NavGraphBuilder.authNavGraph(
 
         composable(route = Destination.SignUpDestination.route) {
             SignUpScreen(navController = navController)
-        }
-
-        composable(route = Destination.EmailValidationDestination.route) {
-            EmailValidationScreen(navController = navController)
         }
     }
 }

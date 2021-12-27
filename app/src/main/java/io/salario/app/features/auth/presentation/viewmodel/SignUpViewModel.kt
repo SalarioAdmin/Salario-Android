@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.salario.app.core.model.UIError
+import io.salario.app.core.shared_ui.composable.DialogInfoType
 import io.salario.app.core.util.Resource
 import io.salario.app.features.auth.domain.use_case.CreateUser
 import io.salario.app.features.auth.presentation.state.SignUpState
@@ -15,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val createUser: CreateUser,
+    private val createUser: CreateUser
 ) : ViewModel() {
     var signUpState by mutableStateOf(SignUpState())
         private set
@@ -26,24 +28,41 @@ class SignUpViewModel @Inject constructor(
                 when (result) {
                     is Resource.Error -> {
                         signUpState = signUpState.copy(
-                            errorMessage = "Error",
                             isLoading = false
-                        )
+                        ).apply {
+                            error = UIError(
+                                result.message!!,
+                                DialogInfoType.ErrorNoConnection, // TODO find a way to identify type
+                                isActive = true
+                            )
+                        }
                     }
                     is Resource.Loading -> {
                         signUpState = signUpState.copy(
-                            errorMessage = "",
                             isLoading = true
-                        )
+                        ).apply {
+                            error = error.copy(
+                                isActive = false
+                            )
+                        }
                     }
                     is Resource.Success -> {
                         signUpState = signUpState.copy(
-                            errorMessage = "",
                             isLoading = false,
-                            shouldNavigateForward = true
-                        )
+                            signUpSuccess = true
+                        ).apply {
+                            error = error.copy(
+                                isActive = false
+                            )
+                        }
                     }
                 }
             }.launchIn(viewModelScope)
+    }
+
+    fun clearError() {
+        signUpState.error = signUpState.error.copy(
+            isActive = false
+        )
     }
 }

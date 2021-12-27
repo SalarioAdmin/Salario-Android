@@ -17,14 +17,6 @@ interface AuthApi {
     ): Response<Unit>
 
     @FormUrlEncoded
-    @POST("auth/validateUserCreation")
-    suspend fun validateUserCreation(
-        @Field("email") email: String,
-        @Field("userCreationValidationToken") userCreationValidationToken: String,
-        @Tag authorization: AuthorizationType = AuthorizationType.NONE
-    ): Response<Unit>
-
-    @FormUrlEncoded
     @POST("auth/authenticateUser")
     suspend fun authenticateUser(
         @Field("email") email: String,
@@ -59,6 +51,6 @@ interface AuthApi {
     ): Response<Unit>
 
     companion object {
-        const val BASE_URL = "http://10.0.2.2:3000/"
+        const val BASE_URL = "http://192.168.2.79:3000/"
     }
 }

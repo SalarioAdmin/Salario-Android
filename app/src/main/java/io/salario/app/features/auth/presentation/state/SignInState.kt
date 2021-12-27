@@ -1,8 +1,8 @@
 package io.salario.app.features.auth.presentation.state
 
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import io.salario.app.core.model.UIError
 import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.core.util.getPasswordValidationError

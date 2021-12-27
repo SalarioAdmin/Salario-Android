@@ -31,37 +31,54 @@ class AuthRepositoryImpl @Inject constructor(
     ): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            api.createUser(firstName, lastName, email, password)
-            emit(Resource.Success())
+            val response = api.createUser(firstName, lastName, email, password)
+            if (response.isSuccessful) {
+                emit(Resource.Success())
+            } else {
+                emit(
+                    Resource.Error(
+                        "Something went wrong.\nPlease try again.",
+                        type = ErrorType.ServerError
+                    )
+                )
+            }
         } catch (e: IOException) {
-            Log.e(TAG, "Create user failed due to ", e)
-            emit(Resource.Error())
+            Log.e(TAG, "Sign up user failed due to ", e)
+            emit(
+                Resource.Error(
+                    "Looks like a connection error.\nPlease check your internet connection.",
+                    type = ErrorType.IO
+                )
+            )
         } catch (e: HttpException) {
-            Log.e(TAG, "Create user failed due to ", e)
-            emit(Resource.Error())
-        } catch (e: Exception) {
-            Log.e(TAG, "Create user failed due to ", e)
-            emit(Resource.Error())
-        }
-    }
+            Log.e(TAG, "Sign up user failed due to ", e)
+            when (e.code()) {
+                400 -> {
+                    emit(
+                        Resource.Error(
+                            e.message,
+                            type = ErrorType.WrongInput
+                        )
+                    )
+                }
 
-    override fun validateUserCreation( // TODO remove it
-        email: String,
-        userCreationValidationToken: String
-    ): Flow<Resource<Unit>> = flow {
-        emit(Resource.Loading())
-        try {
-            api.validateUserCreation(email, userCreationValidationToken)
-            emit(Resource.Success())
-        } catch (e: IOException) {
-            Log.e(TAG, "Validate user failed due to ", e)
-            emit(Resource.Error())
-        } catch (e: HttpException) {
-            Log.e(TAG, "Validate user failed due to ", e)
-            emit(Resource.Error())
+                500 -> {
+                    emit(
+                        Resource.Error(
+                            "Something went wrong.\nPlease try again.",
+                            type = ErrorType.ServerError
+                        )
+                    )
+                }
+            }
         } catch (e: Exception) {
-            Log.e(TAG, "Validate user failed due to ", e)
-            emit(Resource.Error())
+            Log.e(TAG, "Sign up user failed due to ", e)
+            emit(
+                Resource.Error(
+                    "Something went wrong.\nPlease try again.",
+                    type = ErrorType.ServerError
+                )
+            )
         }
     }
 
@@ -93,25 +110,32 @@ class AuthRepositoryImpl @Inject constructor(
             Log.e(TAG, "Authenticate user failed due to ", e)
             when (e.code()) {
                 400 -> {
-                    emit(Resource.Error(
-                        "Incorrect Email or Password.",
-                        type = ErrorType.WrongInput
-                    ))
+                    emit(
+                        Resource.Error(
+                            "Incorrect Email or Password.",
+                            type = ErrorType.WrongInput
+                        )
+                    )
                 }
 
                 500 -> {
-                    emit(Resource.Error(
-                        "Something went wrong.\nPlease try again.",
-                        type = ErrorType.ServerError
-                    ))
-            }
+                    emit(
+                        Resource.Error(
+                            "Something went wrong.\nPlease try again.",
+                            type = ErrorType.ServerError
+                        )
+                    )
+                }
             }
         } catch (e: Exception) {
             Log.e(TAG, "Authenticate user failed due to ", e)
-            emit(Resource.Error(
-                "Something went wrong.\nPlease try again.",
-                type = ErrorType.ServerError
-            ))        }
+            emit(
+                Resource.Error(
+                    "Something went wrong.\nPlease try again.",
+                    type = ErrorType.ServerError
+                )
+            )
+        }
     }
 
     override fun resetPasswordRequest(email: String): Flow<Resource<Unit>> = flow {

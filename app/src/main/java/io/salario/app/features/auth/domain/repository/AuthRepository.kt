@@ -10,10 +10,6 @@ interface AuthRepository {
         firstName: String, lastName: String, email: String, password: String
     ): Flow<Resource<out Any>>
 
-    fun validateUserCreation(
-        email: String, userCreationValidationToken: String
-    ): Flow<Resource<out Any>>
-
     fun authenticateUser(email: String, password: String): Flow<Resource<TokenPairDto>>
     fun resetPasswordRequest(email: String): Flow<Resource<out Any>>
     fun resetPassword(resetPasswordToken: String): Flow<Resource<out Any>>

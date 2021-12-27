@@ -9,7 +9,6 @@ sealed class Destination(val route: String, val label: String = "") {
     object IntroDestination : Destination("intro_screen")
     object SignInDestination : Destination("sign_in_screen")
     object SignUpDestination : Destination("sign_up_screen")
-    object EmailValidationDestination : Destination("email_validate_screen")
 
     // Features
     object StatusDestination : Destination("status_screen", "Home")

@@ -1,6 +1,5 @@
 package io.salario.app.core.shared_ui.composable
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -11,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -24,7 +22,12 @@ import com.salario.app.R
 
 @ExperimentalComposeUiApi
 @Composable
-fun InfoDialog(infoType: DialogInfoType, errorText: String, onDismissPressed: () -> Unit) {
+fun InfoDialog(
+    infoType: DialogInfoType,
+    title: String,
+    subtitle: String = "",
+    onDismissPressed: () -> Unit
+) {
     val composition by rememberLottieComposition(
         when (infoType) {
             DialogInfoType.ErrorGeneral -> {
@@ -35,6 +38,9 @@ fun InfoDialog(infoType: DialogInfoType, errorText: String, onDismissPressed: ()
             }
             DialogInfoType.ErrorWrongCredentials -> {
                 LottieCompositionSpec.RawRes(R.raw.wrong_action_animation)
+            }
+            DialogInfoType.InfoValidationEmailSent -> {
+                LottieCompositionSpec.RawRes(R.raw.send_email_animation)
             }
         }
     )
@@ -51,7 +57,6 @@ fun InfoDialog(infoType: DialogInfoType, errorText: String, onDismissPressed: ()
         content = {
             Card(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                backgroundColor = Color.White,
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Column(
@@ -67,13 +72,23 @@ fun InfoDialog(infoType: DialogInfoType, errorText: String, onDismissPressed: ()
                             .size(200.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = errorText,
+                        text = title,
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.subtitle2
+                        style = MaterialTheme.typography.subtitle1
                     )
+
+                    if (subtitle.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = subtitle,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.subtitle2
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
@@ -95,4 +110,5 @@ sealed class DialogInfoType {
     object ErrorGeneral : DialogInfoType()
     object ErrorWrongCredentials : DialogInfoType()
     object ErrorNoConnection : DialogInfoType()
+    object InfoValidationEmailSent : DialogInfoType()
 }

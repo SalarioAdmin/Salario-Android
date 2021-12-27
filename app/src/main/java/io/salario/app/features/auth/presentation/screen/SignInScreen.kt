@@ -1,6 +1,5 @@
 package io.salario.app.features.auth.presentation.screen
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,10 +20,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.salario.app.R
 import io.salario.app.core.model.UIError
-import io.salario.app.core.shared_ui.composable.*
-import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.core.navigation.Destination
 import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
+import io.salario.app.core.shared_ui.composable.*
+import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.features.auth.presentation.viewmodel.SignInViewModel
 import kotlinx.coroutines.delay
 
@@ -109,7 +108,7 @@ fun SignInScreenContent(
         }
 
         if (error.isActive) {
-            InfoDialog(error.dialogType, error.text, onErrorDialogDismiss)
+            InfoDialog(error.dialogType, error.text, onDismissPressed = onErrorDialogDismiss)
         }
 
         WelcomeCard(

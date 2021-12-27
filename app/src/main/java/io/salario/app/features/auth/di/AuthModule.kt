@@ -73,12 +73,6 @@ object AuthModule {
 
     @Provides
     @Singleton
-    fun provideValidateUserCreationUseCase(repository: AuthRepository): ValidateUserCreation {
-        return ValidateUserCreation(repository)
-    }
-
-    @Provides
-    @Singleton
     fun provideAuthenticateUserUseCase(repository: AuthRepository): AuthenticateUser {
         return AuthenticateUser(repository)
     }

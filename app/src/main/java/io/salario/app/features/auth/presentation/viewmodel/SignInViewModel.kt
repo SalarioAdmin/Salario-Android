@@ -87,7 +87,7 @@ class SignInViewModel @Inject constructor(
                         signInState = signInState.copy(
                             isLoading = true
                         ).apply {
-                            signInState.error = signInState.error.copy(
+                            error = error.copy(
                                 isActive = false
                             )
                         }
@@ -97,7 +97,7 @@ class SignInViewModel @Inject constructor(
                         signInState = signInState.copy(
                             isLoading = false,
                         ).apply {
-                            signInState.error = signInState.error.copy(
+                            error = error.copy(
                                 isActive = false
                             )
                         }
