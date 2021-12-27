@@ -1,4 +1,4 @@
-package io.salario.app.features.settings.presentation.viewmodel
+package io.salario.app.features.profile.presentation.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

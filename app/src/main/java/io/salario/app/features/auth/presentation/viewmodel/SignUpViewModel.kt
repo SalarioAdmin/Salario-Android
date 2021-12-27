@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.salario.app.core.model.UIError
 import io.salario.app.core.shared_ui.composable.DialogInfoType
+import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource
 import io.salario.app.features.auth.domain.use_case.CreateUser
 import io.salario.app.features.auth.presentation.state.SignUpState
@@ -32,7 +33,12 @@ class SignUpViewModel @Inject constructor(
                         ).apply {
                             error = UIError(
                                 result.message!!,
-                                DialogInfoType.ErrorNoConnection, // TODO find a way to identify type
+                                dialogType = when (result.type) {
+                                    ErrorType.IO -> DialogInfoType.ErrorNoConnection
+                                    ErrorType.ServerError -> DialogInfoType.ErrorGeneral
+                                    ErrorType.WrongInput -> DialogInfoType.ErrorWrongCredentials
+                                    else -> DialogInfoType.ErrorGeneral
+                                },
                                 isActive = true
                             )
                         }

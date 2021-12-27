@@ -26,9 +26,7 @@ fun SampleTextField(
         modifier = modifier.padding(horizontal = 16.dp)
     ) {
         OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp),
+            modifier = Modifier.fillMaxWidth(),
             value = state.text,
             label = { Text(label, style = MaterialTheme.typography.body1) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

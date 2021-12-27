@@ -8,9 +8,9 @@ import androidx.navigation.navigation
 import io.salario.app.core.navigation.Destination
 import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.features.notifications.presentation.screen.NotificationsScreen
+import io.salario.app.features.profile.presentation.screen.SettingsScreen
 import io.salario.app.features.salary_analytics.presentation.screen.SalaryAnalyticsScreen
 import io.salario.app.features.salary_details.presentation.screen.StatusScreen
-import io.salario.app.features.settings.presentation.screen.SettingsScreen
 
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.featuresNavigationGraph(

@@ -10,7 +10,7 @@ import io.salario.app.core.util.isValidEmail
 
 data class SignInState(
     val isLoading: Boolean = false,
-    val shouldNavigateForward: Boolean = false,
+    val signInSuccess: Boolean = false,
     val emailInputState: TextFieldState = TextFieldState(
         validate = { email ->
             when {

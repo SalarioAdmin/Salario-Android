@@ -31,9 +31,9 @@ import kotlinx.coroutines.delay
 @Composable
 fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hiltViewModel()) {
     viewModel.signInState.apply {
-        if (shouldNavigateForward) {
+        if (signInSuccess) {
             WelcomeDialog()
-            LaunchedEffect(key1 = shouldNavigateForward) {
+            LaunchedEffect(key1 = signInSuccess) {
                 delay(3000L)
                 navController.navigate(FEATURES_GRAPH_ROUTE) {
                     popUpTo(Destination.SignInDestination.route) {

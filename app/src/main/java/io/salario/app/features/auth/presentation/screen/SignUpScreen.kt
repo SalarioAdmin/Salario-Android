@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,14 +17,28 @@ import androidx.navigation.NavController
 import com.salario.app.R
 import io.salario.app.core.model.UIError
 import io.salario.app.core.navigation.Destination
+import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.core.shared_ui.composable.*
 import io.salario.app.core.shared_ui.state_holder.TextFieldState
 import io.salario.app.features.auth.presentation.viewmodel.SignUpViewModel
+import kotlinx.coroutines.delay
 
 @ExperimentalComposeUiApi
 @Composable
 fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hiltViewModel()) {
     viewModel.signUpState.apply {
+        if (signUpSuccess) {
+            WelcomeDialog()
+            LaunchedEffect(key1 = signUpSuccess) {
+                delay(3000L)
+                navController.navigate(FEATURES_GRAPH_ROUTE) {
+                    popUpTo(Destination.SignUpDestination.route) {
+                        inclusive = true
+                    }
+                }
+            }
+        }
+
         SignUpScreenContent(
             isLoading = isLoading,
             error = error,
@@ -59,14 +74,6 @@ fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hilt
                         inclusive = true
                     }
                 }
-            },
-            showSuccessDialog = signUpSuccess,
-            onSuccessDialogDismissed = {
-                navController.navigate(Destination.SignInDestination.route) {
-                    popUpTo(Destination.SignUpDestination.route) {
-                        inclusive = true
-                    }
-                }
             }
         )
     }
@@ -83,9 +90,7 @@ fun SignUpScreenContent(
     emailInputFieldState: TextFieldState,
     passwordInputFieldState: TextFieldState,
     onSignUpPressed: () -> Unit,
-    onSignInPressed: () -> Unit,
-    showSuccessDialog: Boolean,
-    onSuccessDialogDismissed: () -> Unit
+    onSignInPressed: () -> Unit
 ) {
 
     ConstraintLayout(
@@ -103,17 +108,6 @@ fun SignUpScreenContent(
 
         if (isLoading) {
             LoadingDialog(DialogLoadingType.General)
-        }
-
-        if (showSuccessDialog) {
-            InfoDialog(
-                infoType = DialogInfoType.InfoValidationEmailSent,
-                title = "Validation link sent to ${emailInputFieldState.text}",
-                subtitle = "Go to your Email inbox and press on the Link to validate your Account." +
-                        "\nThe link is valid for 24h."
-            ) {
-                onSuccessDialogDismissed()
-            }
         }
 
         if (error.isActive) {
@@ -142,16 +136,16 @@ fun SignUpScreenContent(
                     top.linkTo(emailTextField.bottom, margin = 8.dp)
                 }
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             SampleTextField(
-                Modifier.weight(1f),
+                Modifier.weight(0.5f),
                 label = "First Name",
                 state = firstNameInputFieldState
             )
 
             SampleTextField(
-                Modifier.weight(1f),
+                Modifier.weight(0.5f),
                 label = "Last Name",
                 state = lastNameInputFieldState
             )

@@ -57,7 +57,7 @@ class SignInViewModel @Inject constructor(
                     is Resource.Success -> {
                         signInState = signInState.copy(
                             isLoading = false,
-                            shouldNavigateForward = true,
+                            signInSuccess = true,
                         ).apply {
                             signInState.error = signInState.error.copy(
                                 isActive = false
@@ -78,7 +78,12 @@ class SignInViewModel @Inject constructor(
                         ).apply {
                             error = UIError(
                                 result.message!!,
-                                DialogInfoType.ErrorNoConnection, // TODO find a way to identify type
+                                dialogType = when (result.type) {
+                                    ErrorType.IO -> DialogInfoType.ErrorNoConnection
+                                    ErrorType.ServerError -> DialogInfoType.ErrorGeneral
+                                    ErrorType.WrongInput -> DialogInfoType.ErrorWrongCredentials
+                                    else -> DialogInfoType.ErrorGeneral
+                                },
                                 isActive = true
                             )
                         }

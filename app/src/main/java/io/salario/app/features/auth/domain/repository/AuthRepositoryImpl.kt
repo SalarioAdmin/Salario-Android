@@ -31,17 +31,9 @@ class AuthRepositoryImpl @Inject constructor(
     ): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            val response = api.createUser(firstName, lastName, email, password)
-            if (response.isSuccessful) {
-                emit(Resource.Success())
-            } else {
-                emit(
-                    Resource.Error(
-                        "Something went wrong.\nPlease try again.",
-                        type = ErrorType.ServerError
-                    )
-                )
-            }
+            val tokensResponse = api.createUser(firstName, lastName, email, password)
+            saveTokens(tokensResponse)
+            emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Sign up user failed due to ", e)
             emit(
@@ -56,7 +48,7 @@ class AuthRepositoryImpl @Inject constructor(
                 400 -> {
                     emit(
                         Resource.Error(
-                            e.message,
+                            "User already exist, Please Sign in.",
                             type = ErrorType.WrongInput
                         )
                     )
@@ -85,18 +77,11 @@ class AuthRepositoryImpl @Inject constructor(
     override fun authenticateUser(
         email: String,
         password: String
-    ): Flow<Resource<TokenPairDto>> = flow {
+    ): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            val response = api.authenticateUser(email, password)
-            dataStoreManager.apply {
-                response.accessToken?.let {
-                    saveAccessToken(it)
-                }
-                response.refreshToken?.let {
-                    saveRefreshToken(it)
-                }
-            }
+            val tokensResponse = api.authenticateUser(email, password)
+            saveTokens(tokensResponse)
             emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Authenticate user failed due to ", e)
@@ -112,7 +97,7 @@ class AuthRepositoryImpl @Inject constructor(
                 400 -> {
                     emit(
                         Resource.Error(
-                            "Incorrect Email or Password.",
+                            "Invalid Email or Password.",
                             type = ErrorType.WrongInput
                         )
                     )
@@ -229,6 +214,17 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getAccessToken(): String {
         return dataStoreManager.getAccessToken().first()
+    }
+
+    private suspend fun saveTokens(tokenPairDto: TokenPairDto) {
+        dataStoreManager.apply {
+            tokenPairDto.accessToken?.let {
+                saveAccessToken(it)
+            }
+            tokenPairDto.refreshToken?.let {
+                saveRefreshToken(it)
+            }
+        }
     }
 
     companion object {

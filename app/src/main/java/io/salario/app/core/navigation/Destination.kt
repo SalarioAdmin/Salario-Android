@@ -14,7 +14,7 @@ sealed class Destination(val route: String, val label: String = "") {
     object StatusDestination : Destination("status_screen", "Home")
     object AnalyticsDestination : Destination("analytics_screen", "Analytics")
     object NotificationsDestination : Destination("notification_screen", "Notifications")
-    object SettingsDestination : Destination("settings_screen", "Settings")
+    object SettingsDestination : Destination("settings_screen", "Profile")
 
     fun withArgs(vararg args: String): String {
         return buildString {

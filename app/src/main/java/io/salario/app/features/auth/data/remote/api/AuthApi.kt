@@ -7,17 +7,17 @@ import retrofit2.http.*
 
 interface AuthApi {
     @FormUrlEncoded
-    @POST("auth/createUser")
+    @POST("auth/create_user")
     suspend fun createUser(
         @Field("firstName") firstName: String,
         @Field("lastName") lastName: String,
         @Field("email") email: String,
         @Field("password") password: String,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
-    ): Response<Unit>
+    ): TokenPairDto
 
     @FormUrlEncoded
-    @POST("auth/authenticateUser")
+    @POST("auth/authenticate_user")
     suspend fun authenticateUser(
         @Field("email") email: String,
         @Field("password") password: String,
@@ -25,21 +25,21 @@ interface AuthApi {
     ): TokenPairDto
 
     @FormUrlEncoded
-    @POST("auth/resetPasswordRequest")
+    @POST("auth/reset_password_request")
     suspend fun resetPasswordRequest(
         @Field("email") email: String,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): Response<Unit>
 
     @FormUrlEncoded
-    @POST("auth/resetPassword")
+    @POST("auth/reset_password")
     suspend fun resetPassword(
         @Field("resetPasswordToken") resetPasswordToken: String,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): Response<Unit>
 
     @FormUrlEncoded
-    @POST("auth/refreshToken")
+    @POST("auth/refresh_token")
     suspend fun refreshAccessToken(
         @Field("refreshToken") refreshToken: String,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE

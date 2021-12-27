@@ -1,4 +1,4 @@
-package io.salario.app.features.settings.di
+package io.salario.app.features.profile.di
 
 import dagger.Module
 import dagger.hilt.InstallIn

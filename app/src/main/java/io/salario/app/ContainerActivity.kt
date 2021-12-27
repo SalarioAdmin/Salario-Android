@@ -7,18 +7,18 @@ import androidx.compose.foundation.background
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Analytics
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -70,8 +70,8 @@ class ContainerActivity : ComponentActivity() {
                                     BottomNavItem(
                                         label = Destination.SettingsDestination.label,
                                         route = Destination.SettingsDestination.route,
-                                        icon = Icons.Outlined.Settings,
-                                        selectedIcon = Icons.Filled.Settings
+                                        icon = Icons.Outlined.AccountCircle,
+                                        selectedIcon = Icons.Filled.AccountCircle
                                     )
                                 ),
                                 navController = navController,

@@ -2,7 +2,6 @@ package io.salario.app.features.auth.domain.repository
 
 import io.salario.app.core.model.User
 import io.salario.app.core.util.Resource
-import io.salario.app.features.auth.data.remote.dto.TokenPairDto
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -10,7 +9,7 @@ interface AuthRepository {
         firstName: String, lastName: String, email: String, password: String
     ): Flow<Resource<out Any>>
 
-    fun authenticateUser(email: String, password: String): Flow<Resource<TokenPairDto>>
+    fun authenticateUser(email: String, password: String): Flow<Resource<Unit>>
     fun resetPasswordRequest(email: String): Flow<Resource<out Any>>
     fun resetPassword(resetPasswordToken: String): Flow<Resource<out Any>>
     fun refreshAccessToken(): Flow<Resource<String>>

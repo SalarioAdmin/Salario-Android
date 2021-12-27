@@ -1,4 +1,4 @@
-package io.salario.app.features.settings.presentation.screen
+package io.salario.app.features.profile.presentation.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +13,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import io.salario.app.core.shared_ui.composable.ExitAlertDialog
 import io.salario.app.core.navigation.AUTH_GRAPH_ROUTE
 import io.salario.app.core.navigation.Destination
-import io.salario.app.features.settings.presentation.viewmodel.SettingsViewModel
+import io.salario.app.core.shared_ui.composable.ExitAlertDialog
+import io.salario.app.features.profile.presentation.viewmodel.SettingsViewModel
 
 @ExperimentalComposeUiApi
 @Composable

@@ -72,12 +72,12 @@ fun InfoDialog(
                             .size(200.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = title,
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.subtitle1
+                        style = MaterialTheme.typography.subtitle2
                     )
 
                     if (subtitle.isNotBlank()) {
