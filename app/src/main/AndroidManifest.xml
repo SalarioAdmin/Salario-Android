@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Salario"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="io.salario.app.presentation.activities.ContainerActivity"
+            android:name="io.salario.app.ContainerActivity"
             android:exported="true"
             android:label="@string/title_activity_container"
             android:theme="@style/Theme.Salario.NoActionBar">
