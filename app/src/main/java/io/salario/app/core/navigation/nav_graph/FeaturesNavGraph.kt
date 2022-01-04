@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.salario.app.core.navigation.Destination
 import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.features.notifications.presentation.screen.NotificationsScreen
@@ -12,6 +13,7 @@ import io.salario.app.features.profile.presentation.screen.SettingsScreen
 import io.salario.app.features.salary_analytics.presentation.screen.SalaryAnalyticsScreen
 import io.salario.app.features.salary_details.presentation.screen.StatusScreen
 
+@ExperimentalPermissionsApi
 @ExperimentalComposeUiApi
 fun NavGraphBuilder.featuresNavigationGraph(
     navController: NavController,

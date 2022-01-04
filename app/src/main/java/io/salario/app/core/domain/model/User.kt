@@ -1,4 +1,4 @@
-package io.salario.app.core.model
+package io.salario.app.core.domain.model
 
 data class User(
     val firstName: String,

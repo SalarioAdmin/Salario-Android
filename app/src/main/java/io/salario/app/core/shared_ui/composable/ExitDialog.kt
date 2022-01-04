@@ -17,7 +17,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.salario.app.R
+import io.salario.app.R
 
 @ExperimentalComposeUiApi
 @Composable

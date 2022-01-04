@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.salario.app.R
+import io.salario.app.R
 import io.salario.app.core.navigation.AUTH_GRAPH_ROUTE
 import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.core.navigation.Destination

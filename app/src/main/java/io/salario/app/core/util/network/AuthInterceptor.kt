@@ -3,8 +3,8 @@ package io.salario.app.core.util.network
 import android.util.Log
 import com.auth0.android.jwt.JWT
 import io.salario.app.core.util.Resource
-import io.salario.app.features.auth.domain.use_case.GetAccessToken
-import io.salario.app.features.auth.domain.use_case.RefreshAccessToken
+import io.salario.app.core.domain.use_case.GetAccessToken
+import io.salario.app.core.domain.use_case.RefreshAccessToken
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor

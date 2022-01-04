@@ -5,9 +5,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.salario.app.core.navigation.Destination
 import io.salario.app.features.splash_screen.presentation.screen.SplashScreen
 
+@ExperimentalPermissionsApi
 @ExperimentalComposeUiApi
 @Composable
 fun Navigation(

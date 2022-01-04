@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -15,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import io.salario.app.core.navigation.AUTH_GRAPH_ROUTE
 import io.salario.app.core.navigation.Destination
-import io.salario.app.core.shared_ui.composable.ExitAlertDialog
+import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.features.profile.presentation.viewmodel.SettingsViewModel
 
 @ExperimentalComposeUiApi
@@ -24,6 +25,14 @@ fun SettingsScreen(
     navController: NavController,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
+    BackHandler(enabled = true) {
+        navController.navigate(FEATURES_GRAPH_ROUTE) {
+            popUpTo(Destination.SettingsDestination.route) {
+                inclusive = true
+            }
+        }
+    }
+
     viewModel.authState.apply {
         if (shouldLogout) {
             LaunchedEffect(shouldLogout) {
@@ -35,21 +44,8 @@ fun SettingsScreen(
             }
         }
 
-        var showExitDialog by remember { mutableStateOf(false) }
-
-        BackHandler(enabled = true) {
-            showExitDialog = true
-        }
-
         SettingsContent(
             isLoading = isLoading,
-            showExitDialog = showExitDialog,
-            onDismissPressed = {
-                showExitDialog = false
-            },
-            onExitPressed = {
-                navController.popBackStack()
-            },
             onLogoutPressed = {
                 viewModel.onLogout()
             }
@@ -61,9 +57,6 @@ fun SettingsScreen(
 @Composable
 fun SettingsContent(
     isLoading: Boolean,
-    showExitDialog: Boolean,
-    onExitPressed: () -> Unit,
-    onDismissPressed: () -> Unit,
     onLogoutPressed: () -> Unit
 ) {
     Column(
@@ -73,10 +66,6 @@ fun SettingsContent(
     ) {
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        }
-
-        if (showExitDialog) {
-            ExitAlertDialog(onExitPressed, onDismissPressed)
         }
 
         Button(

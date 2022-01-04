@@ -22,9 +22,9 @@ class AuthDataStoreManager(private val context: Context) {
         it[ACCESS_TOKEN_KEY] ?: ""
     }
 
-    suspend fun saveRefreshToken(accessToken: String) {
+    suspend fun saveRefreshToken(refreshToken: String) {
         context.dataStore.edit {
-            it[REFRESH_TOKEN_KEY] = accessToken
+            it[REFRESH_TOKEN_KEY] = refreshToken
         }
     }
 

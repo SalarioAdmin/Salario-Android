@@ -3,7 +3,7 @@ package io.salario.app.features.auth.domain.repository
 import android.util.Log
 import com.auth0.android.jwt.JWT
 import dagger.hilt.android.scopes.ActivityScoped
-import io.salario.app.core.model.User
+import io.salario.app.core.domain.model.User
 import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource
 import io.salario.app.core.util.getUser

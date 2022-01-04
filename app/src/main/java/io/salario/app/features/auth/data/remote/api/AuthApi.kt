@@ -7,7 +7,7 @@ import retrofit2.http.*
 
 interface AuthApi {
     @FormUrlEncoded
-    @POST("auth/create_user")
+    @POST("create_user")
     suspend fun createUser(
         @Field("firstName") firstName: String,
         @Field("lastName") lastName: String,
@@ -17,7 +17,7 @@ interface AuthApi {
     ): TokenPairDto
 
     @FormUrlEncoded
-    @POST("auth/authenticate_user")
+    @POST("authenticate_user")
     suspend fun authenticateUser(
         @Field("email") email: String,
         @Field("password") password: String,
@@ -25,32 +25,32 @@ interface AuthApi {
     ): TokenPairDto
 
     @FormUrlEncoded
-    @POST("auth/reset_password_request")
+    @POST("reset_password_request")
     suspend fun resetPasswordRequest(
         @Field("email") email: String,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): Response<Unit>
 
     @FormUrlEncoded
-    @POST("auth/reset_password")
+    @POST("reset_password")
     suspend fun resetPassword(
         @Field("resetPasswordToken") resetPasswordToken: String,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): Response<Unit>
 
     @FormUrlEncoded
-    @POST("auth/refresh_token")
+    @POST("refresh_token")
     suspend fun refreshAccessToken(
         @Field("refreshToken") refreshToken: String,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): TokenPairDto
 
-    @DELETE("auth/logout")
+    @DELETE("logout")
     suspend fun logout(
         @Tag authorization: AuthorizationType = AuthorizationType.ACCESS_TOKEN
     ): Response<Unit>
 
     companion object {
-        const val BASE_URL = "http://192.168.2.79:3000/"
+        const val BASE_URL = "http://192.168.2.77:3000/auth/"
     }
 }

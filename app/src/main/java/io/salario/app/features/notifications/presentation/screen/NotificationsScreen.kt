@@ -11,35 +11,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import io.salario.app.core.shared_ui.composable.ExitAlertDialog
+import io.salario.app.core.navigation.Destination
+import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 
 @ExperimentalComposeUiApi
 @Composable
 fun NotificationsScreen(navController: NavController) {
-    var showExitDialog by remember { mutableStateOf(false) }
-
     BackHandler(enabled = true) {
-        showExitDialog = true
+        navController.navigate(FEATURES_GRAPH_ROUTE) {
+            popUpTo(Destination.NotificationsDestination.route) {
+                inclusive = true
+            }
+        }
     }
 
     NotificationsContent(
-        isLoading = false,
-        showExitDialog = showExitDialog,
-        onDismissPressed = {
-            showExitDialog = false
-        }
-    ) {
-        navController.popBackStack()
-    }
+        isLoading = false
+    )
 }
 
 @ExperimentalComposeUiApi
 @Composable
 fun NotificationsContent(
-    isLoading: Boolean,
-    showExitDialog: Boolean,
-    onDismissPressed: () -> Unit,
-    onExitPressed: () -> Unit
+    isLoading: Boolean
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -48,10 +42,6 @@ fun NotificationsContent(
     ) {
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        }
-
-        if (showExitDialog) {
-            ExitAlertDialog(onExitPressed, onDismissPressed)
         }
 
         Text(text = "Notifications")

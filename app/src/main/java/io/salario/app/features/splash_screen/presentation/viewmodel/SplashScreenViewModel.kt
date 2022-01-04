@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.salario.app.core.util.Resource
-import io.salario.app.features.auth.domain.use_case.GetConnectedUser
+import io.salario.app.core.domain.use_case.GetConnectedUser
 import io.salario.app.features.auth.presentation.state.UserAuthState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

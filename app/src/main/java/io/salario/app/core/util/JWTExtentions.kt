@@ -1,7 +1,7 @@
 package io.salario.app.core.util
 
 import com.auth0.android.jwt.JWT
-import io.salario.app.core.model.User
+import io.salario.app.core.domain.model.User
 
 fun JWT.getUser(): User? {
     val firstName = getClaim("firstName").asString()

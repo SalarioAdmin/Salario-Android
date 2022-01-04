@@ -20,7 +20,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants.IterateForever
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.salario.app.R
+import io.salario.app.R
 import io.salario.app.core.navigation.Destination
 import io.salario.app.core.shared_ui.composable.CornerRoundedButton
 import io.salario.app.core.shared_ui.composable.CornerRoundedButtonAppearance

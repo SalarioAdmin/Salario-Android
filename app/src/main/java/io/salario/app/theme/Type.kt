@@ -7,7 +7,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.salario.app.R
+import io.salario.app.R
 
 val fonts = FontFamily(
     Font(R.font.roboto_regular),
@@ -17,7 +17,6 @@ val fonts = FontFamily(
     Font(R.font.roboto_italic, weight = FontWeight.Normal, FontStyle.Italic)
 )
 
-// Set of Material typography styles to start with
 val Typography = Typography(
     h1 = TextStyle(
         fontFamily = fonts,

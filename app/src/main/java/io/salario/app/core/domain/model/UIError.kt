@@ -1,4 +1,4 @@
-package io.salario.app.core.model
+package io.salario.app.core.domain.model
 
 import io.salario.app.core.shared_ui.composable.DialogInfoType
 

@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.salario.app.R
-import io.salario.app.core.model.UIError
+import io.salario.app.R
+import io.salario.app.core.domain.model.UIError
 import io.salario.app.core.navigation.Destination
 import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.core.shared_ui.composable.*

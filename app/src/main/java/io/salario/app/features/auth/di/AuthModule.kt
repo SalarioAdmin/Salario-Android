@@ -1,13 +1,16 @@
 package io.salario.app.features.auth.di
 
 import android.content.Context
-import com.salario.app.BuildConfig
+import io.salario.app.BuildConfig
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.salario.app.core.domain.use_case.GetAccessToken
+import io.salario.app.core.domain.use_case.GetConnectedUser
+import io.salario.app.core.domain.use_case.RefreshAccessToken
 import io.salario.app.core.util.network.AuthInterceptor
 import io.salario.app.features.auth.data.local.datastore.AuthDataStoreManager
 import io.salario.app.features.auth.data.remote.api.AuthApi
@@ -23,6 +26,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthModule {
+
     @Provides
     @Singleton
     fun provideAuthApi(

@@ -1,4 +1,4 @@
-package io.salario.app.features.auth.presentation.viewmodel
+package io.salario.app.features.salary_details.presentation.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,27 +10,28 @@ import io.salario.app.core.domain.model.UIError
 import io.salario.app.core.shared_ui.composable.DialogInfoType
 import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource
-import io.salario.app.features.auth.domain.use_case.AuthenticateUser
-import io.salario.app.features.auth.domain.use_case.ResetPasswordRequest
-import io.salario.app.features.auth.presentation.state.SignInState
+import io.salario.app.features.salary_details.domain.use_case.GetAllUserPaychecks
+import io.salario.app.features.salary_details.domain.use_case.UploadPaycheck
+import io.salario.app.features.salary_details.presentation.state.StatusState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class SignInViewModel @Inject constructor(
-    private val authenticateUser: AuthenticateUser,
-    private val resetPassword: ResetPasswordRequest
+class StatusViewModel @Inject constructor(
+    private val uploadPaycheck: UploadPaycheck,
+    private val getAllUserPaychecks: GetAllUserPaychecks
 ) : ViewModel() {
-    var signInState by mutableStateOf(SignInState())
+    // TODO rename it
+    var statusState by mutableStateOf(StatusState())
         private set
 
-    fun onSignIn(email: String, password: String) {
-        authenticateUser(email, password)
+    fun onUploadPaycheck(pdfData: String) {
+        uploadPaycheck(pdfData)
             .onEach { result ->
                 when (result) {
                     is Resource.Error -> {
-                        signInState = signInState.copy(
+                        statusState = statusState.copy(
                             isLoading = false
                         ).apply {
                             error = UIError(
@@ -46,34 +47,35 @@ class SignInViewModel @Inject constructor(
                         }
                     }
                     is Resource.Loading -> {
-                        signInState = signInState.copy(
+                        statusState = statusState.copy(
                             isLoading = true
                         ).apply {
-                            signInState.error = signInState.error.copy(
+                            statusState.error = statusState.error.copy(
                                 isActive = false
                             )
                         }
                     }
                     is Resource.Success -> {
-                        signInState = signInState.copy(
-                            isLoading = false,
-                            signInSuccess = true,
+                        statusState = statusState.copy(
+                            isLoading = false
                         ).apply {
-                            signInState.error = signInState.error.copy(
+                            statusState.error = statusState.error.copy(
                                 isActive = false
                             )
+                            showUploadSuccessDialog = true
                         }
                     }
                 }
             }.launchIn(viewModelScope)
     }
 
-    fun onResetPassword(email: String) {
-        resetPassword(email)
+
+    fun getUserPaychecks() {
+        getAllUserPaychecks()
             .onEach { result ->
                 when (result) {
                     is Resource.Error -> {
-                        signInState = signInState.copy(
+                        statusState = statusState.copy(
                             isLoading = false
                         ).apply {
                             error = UIError(
@@ -89,31 +91,40 @@ class SignInViewModel @Inject constructor(
                         }
                     }
                     is Resource.Loading -> {
-                        signInState = signInState.copy(
+                        statusState = statusState.copy(
                             isLoading = true
                         ).apply {
-                            error = error.copy(
+                            statusState.error = statusState.error.copy(
                                 isActive = false
                             )
                         }
                     }
                     is Resource.Success -> {
-                        // TODO what to do when success
-                        signInState = signInState.copy(
+                        statusState = statusState.copy(
                             isLoading = false,
+                            paychecks = result.data
                         ).apply {
-                            error = error.copy(
+                            statusState.error = statusState.error.copy(
                                 isActive = false
                             )
+                            showUploadSuccessDialog = true
                         }
                     }
                 }
             }.launchIn(viewModelScope)
     }
 
-    fun clearError() {
-        signInState.error = signInState.error.copy(
+    fun setErrorDialogVisibility(visible: Boolean) {
+        statusState.error = statusState.error.copy(
             isActive = false
         )
+    }
+
+    fun setExitDialogVisibility(visible: Boolean) {
+        statusState.showExitDialog = visible
+    }
+
+    fun setUploadSuccessDialogVisibility(visible: Boolean) {
+        statusState.showUploadSuccessDialog = visible
     }
 }

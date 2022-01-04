@@ -1,4 +1,4 @@
-package io.salario.app.features.auth.domain.use_case
+package io.salario.app.core.domain.use_case
 
 import dagger.Lazy
 import io.salario.app.features.auth.domain.repository.AuthRepository

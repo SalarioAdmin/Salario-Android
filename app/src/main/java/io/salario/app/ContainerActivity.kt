@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import dagger.hilt.android.AndroidEntryPoint
 import io.salario.app.core.navigation.Destination
 import io.salario.app.core.navigation.bottom_navigation.BottomNavItem
@@ -33,6 +34,7 @@ import io.salario.app.theme.SalarioTheme
 @AndroidEntryPoint
 class ContainerActivity : ComponentActivity() {
 
+    @ExperimentalPermissionsApi
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

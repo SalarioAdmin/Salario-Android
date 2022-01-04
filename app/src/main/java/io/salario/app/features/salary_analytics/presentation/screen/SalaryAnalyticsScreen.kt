@@ -6,41 +6,34 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import io.salario.app.core.shared_ui.composable.ExitAlertDialog
+import io.salario.app.core.navigation.Destination
+import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 
 @ExperimentalComposeUiApi
 @Composable
 fun SalaryAnalyticsScreen(navController: NavController) {
-    var showExitDialog by remember { mutableStateOf(false) }
-
     BackHandler(enabled = true) {
-        showExitDialog = true
+        navController.navigate(FEATURES_GRAPH_ROUTE) {
+            popUpTo(Destination.AnalyticsDestination.route) {
+                inclusive = true
+            }
+        }
     }
 
     SalaryAnalyticsContent(
-        isLoading = false,
-        showExitDialog = showExitDialog,
-        onDismissPressed = {
-            showExitDialog = false
-        },
-        onExitPressed = {
-            // TODO fire exit event to the activity
-        }
+        isLoading = false
     )
 }
 
 @ExperimentalComposeUiApi
 @Composable
 fun SalaryAnalyticsContent(
-    isLoading: Boolean,
-    showExitDialog: Boolean,
-    onExitPressed: () -> Unit,
-    onDismissPressed: () -> Unit
+    isLoading: Boolean
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -49,10 +42,6 @@ fun SalaryAnalyticsContent(
     ) {
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        }
-
-        if (showExitDialog) {
-            ExitAlertDialog(onExitPressed, onDismissPressed)
         }
 
         Text(text = "Analytics")

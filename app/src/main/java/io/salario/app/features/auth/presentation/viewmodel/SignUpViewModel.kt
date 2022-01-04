@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.salario.app.core.model.UIError
+import io.salario.app.core.domain.model.UIError
 import io.salario.app.core.shared_ui.composable.DialogInfoType
 import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource

@@ -84,6 +84,7 @@ dependencies {
 
     // Google Accompanist for UI controlling in Compose
      implementation "com.google.accompanist:accompanist-systemuicontroller:0.21.3-beta"
+     implementation "com.google.accompanist:accompanist-permissions:0.21.3-beta"
 
     // Dagger Hilt
     implementation 'com.google.dagger:hilt-android:2.40.5'
