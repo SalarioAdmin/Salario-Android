@@ -1,4 +1,4 @@
-package io.salario.app.features.salary_details.data.remote.dto
+package io.salario.app.features.salary_details.data.remote.dto.response
 
 import io.salario.app.features.salary_details.domain.model.Paycheck
 

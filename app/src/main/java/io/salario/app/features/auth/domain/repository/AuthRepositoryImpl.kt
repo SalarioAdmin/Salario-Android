@@ -9,7 +9,8 @@ import io.salario.app.core.util.Resource
 import io.salario.app.core.util.getUser
 import io.salario.app.features.auth.data.local.datastore.AuthDataStoreManager
 import io.salario.app.features.auth.data.remote.api.AuthApi
-import io.salario.app.features.auth.data.remote.dto.TokenPairDto
+import io.salario.app.features.auth.data.remote.dto.body.*
+import io.salario.app.features.auth.data.remote.dto.response.TokenPairDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -31,7 +32,9 @@ class AuthRepositoryImpl @Inject constructor(
     ): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            val tokensResponse = api.createUser(firstName, lastName, email, password)
+            val tokensResponse = api.createUser(
+                CreateUserBody(firstName, lastName, email, password)
+            )
             saveTokens(tokensResponse)
             emit(Resource.Success())
         } catch (e: IOException) {
@@ -80,7 +83,9 @@ class AuthRepositoryImpl @Inject constructor(
     ): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            val tokensResponse = api.authenticateUser(email, password)
+            val tokensResponse = api.authenticateUser(
+                AuthenticateUserBody(email, password)
+            )
             saveTokens(tokensResponse)
             emit(Resource.Success())
         } catch (e: IOException) {
@@ -126,7 +131,9 @@ class AuthRepositoryImpl @Inject constructor(
     override fun resetPasswordRequest(email: String): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            api.resetPasswordRequest(email)
+            api.resetPasswordRequest(
+                ResetPasswordRequestBody(email)
+            )
             emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Reset password request failed due to ", e)
@@ -143,7 +150,9 @@ class AuthRepositoryImpl @Inject constructor(
     override fun resetPassword(resetPasswordToken: String): Flow<Resource<Unit>> = flow {
         emit(Resource.Loading())
         try {
-            api.resetPassword(resetPasswordToken)
+            api.resetPassword(
+                ResetPasswordBody(resetPasswordToken)
+            )
             emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Reset password failed due to ", e)
@@ -161,7 +170,7 @@ class AuthRepositoryImpl @Inject constructor(
         val refreshToken = dataStoreManager.getRefreshToken().first()
         if (refreshToken.isNotEmpty()) {
             try {
-                val response = api.refreshAccessToken(refreshToken)
+                val response = api.refreshAccessToken(RefreshTokenBody(refreshToken))
                 response.accessToken?.let {
                     dataStoreManager.saveAccessToken(it)
                     emit(Resource.Success(it))

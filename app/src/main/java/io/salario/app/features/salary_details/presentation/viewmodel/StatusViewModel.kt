@@ -116,7 +116,7 @@ class StatusViewModel @Inject constructor(
 
     fun setErrorDialogVisibility(visible: Boolean) {
         statusState.error = statusState.error.copy(
-            isActive = false
+            isActive = visible
         )
     }
 

@@ -1,47 +1,39 @@
 package io.salario.app.features.auth.data.remote.api
 
 import io.salario.app.core.util.network.AuthorizationType
-import io.salario.app.features.auth.data.remote.dto.TokenPairDto
+import io.salario.app.features.auth.data.remote.dto.body.*
+import io.salario.app.features.auth.data.remote.dto.response.TokenPairDto
 import retrofit2.Response
 import retrofit2.http.*
 
 interface AuthApi {
-    @FormUrlEncoded
     @POST("create_user")
     suspend fun createUser(
-        @Field("firstName") firstName: String,
-        @Field("lastName") lastName: String,
-        @Field("email") email: String,
-        @Field("password") password: String,
+        @Body createUserBody: CreateUserBody,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): TokenPairDto
 
-    @FormUrlEncoded
-    @POST("authenticate_user")
+    @PATCH("authenticate_user")
     suspend fun authenticateUser(
-        @Field("email") email: String,
-        @Field("password") password: String,
+        @Body authenticateUserBody: AuthenticateUserBody,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): TokenPairDto
 
-    @FormUrlEncoded
     @POST("reset_password_request")
     suspend fun resetPasswordRequest(
-        @Field("email") email: String,
+        @Body requestResetPasswordBody: ResetPasswordRequestBody,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): Response<Unit>
 
-    @FormUrlEncoded
     @POST("reset_password")
     suspend fun resetPassword(
-        @Field("resetPasswordToken") resetPasswordToken: String,
+        @Body resetPasswordBody: ResetPasswordBody,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): Response<Unit>
 
-    @FormUrlEncoded
-    @POST("refresh_token")
+    @PATCH("refresh_token")
     suspend fun refreshAccessToken(
-        @Field("refreshToken") refreshToken: String,
+        @Body refreshToken: RefreshTokenBody,
         @Tag authorization: AuthorizationType = AuthorizationType.NONE
     ): TokenPairDto
 

@@ -6,6 +6,7 @@ import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource
 import io.salario.app.features.auth.domain.repository.AuthRepositoryImpl
 import io.salario.app.features.salary_details.data.remote.api.SalaryApi
+import io.salario.app.features.salary_details.data.remote.dto.body.UploadPaycheckBody
 import io.salario.app.features.salary_details.domain.model.Paycheck
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,11 +18,11 @@ import javax.inject.Inject
 class SalaryRepositoryImpl @Inject constructor(
     private val api: SalaryApi
 ) : SalaryRepository {
-    override fun uploadPaycheck(pdfData: String): Flow<Resource<Unit>> = flow {
+    override fun uploadPaycheck(pdfData: String): Flow<Resource<Paycheck>> = flow {
         emit(Resource.Loading())
         try {
-            api.uploadPaycheck(pdfData)
-            emit(Resource.Success())
+            val paycheckDto = api.uploadPaycheck(UploadPaycheckBody(pdfData))
+            emit(Resource.Success(paycheckDto.toPaycheck()))
         } catch (e: IOException) {
             Log.e(AuthRepositoryImpl.TAG, "Upload Paycheck failed due to ", e)
             emit(

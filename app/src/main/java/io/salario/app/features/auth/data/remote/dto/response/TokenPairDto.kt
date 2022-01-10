@@ -1,4 +1,4 @@
-package io.salario.app.features.auth.data.remote.dto
+package io.salario.app.features.auth.data.remote.dto.response
 
 import io.salario.app.features.auth.domain.model.TokenPair
 
