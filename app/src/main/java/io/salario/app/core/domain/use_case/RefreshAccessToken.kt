@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class RefreshAccessToken(
     private val repository: Lazy<AuthRepository>
 ) {
-    operator fun invoke(): Flow<Resource<String>> {
+    operator fun invoke(): Flow<Resource<out Any>> {
         return repository.get().refreshAccessToken()
     }
 }

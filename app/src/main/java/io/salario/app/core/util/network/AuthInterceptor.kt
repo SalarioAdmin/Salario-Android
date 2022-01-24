@@ -51,7 +51,7 @@ class AuthInterceptor(
             refreshAccessToken().collect { result ->
                 when (result) {
                     is Resource.Success -> {
-                        newAccessToken = result.data!!
+                        newAccessToken = (result.data as String?)!!
                     }
                     is Resource.Loading -> {}
                     is Resource.Error -> {

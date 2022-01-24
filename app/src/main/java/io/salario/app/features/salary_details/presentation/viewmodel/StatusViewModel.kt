@@ -8,8 +8,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.salario.app.core.domain.model.UIError
 import io.salario.app.core.shared_ui.composable.DialogInfoType
-import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource
+import io.salario.app.core.util.network.ErrorType
+import io.salario.app.features.salary_details.domain.model.Paycheck
 import io.salario.app.features.salary_details.domain.use_case.GetAllUserPaychecks
 import io.salario.app.features.salary_details.domain.use_case.UploadPaycheck
 import io.salario.app.features.salary_details.presentation.state.StatusState
@@ -22,7 +23,6 @@ class StatusViewModel @Inject constructor(
     private val uploadPaycheck: UploadPaycheck,
     private val getAllUserPaychecks: GetAllUserPaychecks
 ) : ViewModel() {
-    // TODO rename it
     var statusState by mutableStateOf(StatusState())
         private set
 
@@ -69,7 +69,6 @@ class StatusViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-
     fun getUserPaychecks() {
         getAllUserPaychecks()
             .onEach { result ->
@@ -102,7 +101,7 @@ class StatusViewModel @Inject constructor(
                     is Resource.Success -> {
                         statusState = statusState.copy(
                             isLoading = false,
-                            paychecks = result.data
+                            paychecks = result.data as List<Paycheck>
                         ).apply {
                             statusState.error = statusState.error.copy(
                                 isActive = false

@@ -10,7 +10,7 @@ class AuthenticateUser(
     operator fun invoke(
         email: String,
         password: String
-    ): Flow<Resource<Unit>> {
+    ): Flow<Resource<out Any>> {
         return repository.authenticateUser(email, password)
     }
 }

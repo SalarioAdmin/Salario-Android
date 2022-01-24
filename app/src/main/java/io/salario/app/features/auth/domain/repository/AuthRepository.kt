@@ -9,10 +9,10 @@ interface AuthRepository {
         firstName: String, lastName: String, email: String, password: String
     ): Flow<Resource<out Any>>
 
-    fun authenticateUser(email: String, password: String): Flow<Resource<Unit>>
+    fun authenticateUser(email: String, password: String): Flow<Resource<out Any>>
     fun resetPasswordRequest(email: String): Flow<Resource<out Any>>
     fun resetPassword(resetPasswordToken: String): Flow<Resource<out Any>>
-    fun refreshAccessToken(): Flow<Resource<String>>
+    fun refreshAccessToken(): Flow<Resource<out Any>>
     fun logout(): Flow<Resource<out Any?>>
     fun getConnectedUser(): Flow<Resource<User>>
     suspend fun getAccessToken(): String

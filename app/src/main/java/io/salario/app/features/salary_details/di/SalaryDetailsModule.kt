@@ -1,5 +1,8 @@
 package io.salario.app.features.salary_details.di
 
+import android.app.Application
+import androidx.room.Room
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -7,7 +10,10 @@ import dagger.hilt.components.SingletonComponent
 import io.salario.app.BuildConfig
 import io.salario.app.core.domain.use_case.GetAccessToken
 import io.salario.app.core.domain.use_case.RefreshAccessToken
+import io.salario.app.core.util.db.GsonParser
 import io.salario.app.core.util.network.AuthInterceptor
+import io.salario.app.features.salary_details.data.local.db.converters.Converters
+import io.salario.app.features.salary_details.data.local.db.database.SalaryDatabase
 import io.salario.app.features.salary_details.data.remote.api.SalaryApi
 import io.salario.app.features.salary_details.domain.repository.SalaryRepository
 import io.salario.app.features.salary_details.domain.repository.SalaryRepositoryImpl
@@ -54,9 +60,22 @@ object SalaryDetailsModule {
 
     @Provides
     @Singleton
+    fun provideSalaryDatabase(
+        application: Application
+    ): SalaryDatabase = Room.databaseBuilder(
+            application,
+            SalaryDatabase::class.java,
+            SalaryDatabase.DATABASE_NAME
+        )
+        .addTypeConverter(Converters(GsonParser(Gson())))
+        .build()
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(
-        api: SalaryApi
-    ): SalaryRepository = SalaryRepositoryImpl(api)
+        api: SalaryApi,
+        db: SalaryDatabase
+    ): SalaryRepository = SalaryRepositoryImpl(api, db.dao)
 
     @Provides
     @Singleton

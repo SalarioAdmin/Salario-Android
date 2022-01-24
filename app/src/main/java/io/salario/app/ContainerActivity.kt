@@ -31,11 +31,11 @@ import io.salario.app.core.navigation.bottom_navigation.BottomNavigationBar
 import io.salario.app.core.navigation.nav_graph.Navigation
 import io.salario.app.theme.SalarioTheme
 
+@ExperimentalComposeUiApi
+@ExperimentalPermissionsApi
 @AndroidEntryPoint
 class ContainerActivity : ComponentActivity() {
 
-    @ExperimentalPermissionsApi
-    @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

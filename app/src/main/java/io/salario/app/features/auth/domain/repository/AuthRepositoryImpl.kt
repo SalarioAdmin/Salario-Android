@@ -4,9 +4,9 @@ import android.util.Log
 import com.auth0.android.jwt.JWT
 import dagger.hilt.android.scopes.ActivityScoped
 import io.salario.app.core.domain.model.User
-import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource
 import io.salario.app.core.util.getUser
+import io.salario.app.core.util.network.getError
 import io.salario.app.features.auth.data.local.datastore.AuthDataStoreManager
 import io.salario.app.features.auth.data.remote.api.AuthApi
 import io.salario.app.features.auth.data.remote.dto.body.*
@@ -29,7 +29,7 @@ class AuthRepositoryImpl @Inject constructor(
         lastName: String,
         email: String,
         password: String
-    ): Flow<Resource<Unit>> = flow {
+    ): Flow<Resource<out Any>> = flow {
         emit(Resource.Loading())
         try {
             val tokensResponse = api.createUser(
@@ -38,161 +38,76 @@ class AuthRepositoryImpl @Inject constructor(
             saveTokens(tokensResponse)
             emit(Resource.Success())
         } catch (e: IOException) {
-            Log.e(TAG, "Sign up user failed due to ", e)
-            emit(
-                Resource.Error(
-                    "Looks like a connection error.\nPlease check your internet connection.",
-                    type = ErrorType.IO
-                )
-            )
+            Log.e(TAG, "Authenticate user failed due to ", e)
+            emit(e.getError())
         } catch (e: HttpException) {
-            Log.e(TAG, "Sign up user failed due to ", e)
-            when (e.code()) {
-                400 -> {
-                    emit(
-                        Resource.Error(
-                            "User already exist, Please Sign in.",
-                            type = ErrorType.WrongInput
-                        )
-                    )
-                }
-
-                500 -> {
-                    emit(
-                        Resource.Error(
-                            "Something went wrong.\nPlease try again.",
-                            type = ErrorType.ServerError
-                        )
-                    )
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Sign up user failed due to ", e)
-            emit(
-                Resource.Error(
-                    "Something went wrong.\nPlease try again.",
-                    type = ErrorType.ServerError
-                )
-            )
+            Log.e(TAG, "Authenticate user failed due to ", e)
+            emit(e.getError())
         }
     }
 
     override fun authenticateUser(
         email: String,
         password: String
-    ): Flow<Resource<Unit>> = flow {
+    ): Flow<Resource<out Any>> = flow {
         emit(Resource.Loading())
         try {
-            val tokensResponse = api.authenticateUser(
-                AuthenticateUserBody(email, password)
-            )
+            val tokensResponse = api.authenticateUser(AuthenticateUserBody(email, password))
             saveTokens(tokensResponse)
             emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Authenticate user failed due to ", e)
-            emit(
-                Resource.Error(
-                    "Looks like a connection error.\nPlease check your internet connection.",
-                    type = ErrorType.IO
-                )
-            )
+            emit(e.getError())
         } catch (e: HttpException) {
             Log.e(TAG, "Authenticate user failed due to ", e)
-            when (e.code()) {
-                400 -> {
-                    emit(
-                        Resource.Error(
-                            "Invalid Email or Password.",
-                            type = ErrorType.WrongInput
-                        )
-                    )
-                }
-
-                500 -> {
-                    emit(
-                        Resource.Error(
-                            "Something went wrong.\nPlease try again.",
-                            type = ErrorType.ServerError
-                        )
-                    )
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Authenticate user failed due to ", e)
-            emit(
-                Resource.Error(
-                    "Something went wrong.\nPlease try again.",
-                    type = ErrorType.ServerError
-                )
-            )
+            emit(e.getError())
         }
     }
 
-    override fun resetPasswordRequest(email: String): Flow<Resource<Unit>> = flow {
+    override fun resetPasswordRequest(email: String): Flow<Resource<out Any>> = flow {
         emit(Resource.Loading())
         try {
-            api.resetPasswordRequest(
-                ResetPasswordRequestBody(email)
-            )
+            api.resetPasswordRequest(ResetPasswordRequestBody(email))
             emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Reset password request failed due to ", e)
-            emit(Resource.Error())
+            emit(e.getError())
         } catch (e: HttpException) {
             Log.e(TAG, "Reset password request failed due to ", e)
-            emit(Resource.Error())
-        } catch (e: Exception) {
-            Log.e(TAG, "Reset password request failed due to ", e)
-            emit(Resource.Error())
+            emit(e.getError())
         }
     }
 
-    override fun resetPassword(resetPasswordToken: String): Flow<Resource<Unit>> = flow {
+    override fun resetPassword(resetPasswordToken: String): Flow<Resource<Any>> = flow {
         emit(Resource.Loading())
         try {
-            api.resetPassword(
-                ResetPasswordBody(resetPasswordToken)
-            )
+            api.resetPassword(ResetPasswordBody(resetPasswordToken))
             emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Reset password failed due to ", e)
-            emit(Resource.Error())
+            emit(e.getError())
         } catch (e: HttpException) {
             Log.e(TAG, "Reset password failed due to ", e)
-            emit(Resource.Error())
-        } catch (e: Exception) {
-            Log.e(TAG, "Reset password failed due to ", e)
-            emit(Resource.Error())
+            emit(e.getError())
         }
     }
 
-    override fun refreshAccessToken(): Flow<Resource<String>> = flow {
-        val refreshToken = dataStoreManager.getRefreshToken().first()
-        if (refreshToken.isNotEmpty()) {
-            try {
-                val response = api.refreshAccessToken(RefreshTokenBody(refreshToken))
-                response.accessToken?.let {
-                    dataStoreManager.saveAccessToken(it)
-                    emit(Resource.Success(it))
-                } ?: run {
-                    emit(Resource.Error<String>())
-                }
-            } catch (e: IOException) {
-                Log.e(TAG, "Refresh token failed due to ", e)
-                emit(Resource.Error())
-            } catch (e: HttpException) {
-                Log.e(TAG, "Refresh token failed due to ", e)
-                emit(Resource.Error())
-            } catch (e: Exception) {
-                Log.e(TAG, "Refresh token failed due to ", e)
-                emit(Resource.Error())
-            }
-        } else {
-            emit(Resource.Error("Refresh token not found"))
+    override fun refreshAccessToken(): Flow<Resource<out Any>> = flow {
+        val refreshToken = getAccessToken()
+        try {
+            val tokenPair = api.refreshAccessToken(RefreshTokenBody(refreshToken))
+            saveTokens(tokenPair)
+            emit(Resource.Success())
+        } catch (e: IOException) {
+            Log.e(TAG, "Refresh token failed due to ", e)
+            emit(e.getError())
+        } catch (e: HttpException) {
+            Log.e(TAG, "Refresh token failed due to ", e)
+            emit(e.getError())
         }
     }
 
-    override fun logout(): Flow<Resource<Unit>> = flow {
+    override fun logout(): Flow<Resource<out Any>> = flow {
         emit(Resource.Loading())
         try {
             api.logout()
@@ -200,19 +115,16 @@ class AuthRepositoryImpl @Inject constructor(
             emit(Resource.Success())
         } catch (e: IOException) {
             Log.e(TAG, "Logout failed due to ", e)
-            emit(Resource.Error())
+            emit(e.getError())
         } catch (e: HttpException) {
             Log.e(TAG, "Logout failed due to ", e)
-            emit(Resource.Error())
-        } catch (e: Exception) {
-            Log.e(TAG, "Logout failed due to ", e)
-            emit(Resource.Error())
+            emit(e.getError())
         }
     }
 
     override fun getConnectedUser(): Flow<Resource<User>> = flow {
         emit(Resource.Loading())
-        val token = dataStoreManager.getAccessToken().first()
+        val token = getAccessToken()
         if (token.isNotEmpty()) {
             val user = JWT(token).getUser()
             emit(Resource.Success(user))

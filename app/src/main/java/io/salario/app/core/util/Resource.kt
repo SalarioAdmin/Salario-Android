@@ -1,13 +1,10 @@
 package io.salario.app.core.util
 
-sealed class Resource<T>(val data: T? = null, val message: String? = null) {
-    class Loading<T>(data: T? = null): Resource<T>(data)
-    class Success<T>(data: T? = null): Resource<T>(data)
-    class Error<T>(message: String? = null, val type: ErrorType? = null): Resource<T>(message = message)
-}
+import io.salario.app.core.util.network.ErrorType
 
-sealed class ErrorType {
-    object IO : ErrorType()
-    object ServerError : ErrorType()
-    object WrongInput : ErrorType()
+sealed class Resource<T>(val data: T? = null, val message: String? = null) {
+    class Loading<T>(data: T? = null) : Resource<T>(data)
+    class Success<T>(data: T? = null) : Resource<T>(data)
+    class Error<T>(message: String, data: T? = null, val type: ErrorType? = null) :
+        Resource<T>(data, message)
 }

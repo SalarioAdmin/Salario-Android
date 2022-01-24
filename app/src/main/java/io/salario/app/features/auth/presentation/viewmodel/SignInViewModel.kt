@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.salario.app.core.domain.model.UIError
 import io.salario.app.core.shared_ui.composable.DialogInfoType
-import io.salario.app.core.util.ErrorType
 import io.salario.app.core.util.Resource
+import io.salario.app.core.util.network.ErrorType
 import io.salario.app.features.auth.domain.use_case.AuthenticateUser
 import io.salario.app.features.auth.domain.use_case.ResetPasswordRequest
 import io.salario.app.features.auth.presentation.state.SignInState
