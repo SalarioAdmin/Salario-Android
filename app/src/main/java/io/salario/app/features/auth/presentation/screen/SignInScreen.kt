@@ -19,77 +19,34 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import io.salario.app.R
-import io.salario.app.core.domain.model.UIError
+import io.salario.app.core.domain.model.UIEvent
 import io.salario.app.core.navigation.Destination
-import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.core.shared_ui.composable.*
-import io.salario.app.core.shared_ui.state_holder.TextFieldState
+import io.salario.app.features.auth.presentation.event.SignInEvent
 import io.salario.app.features.auth.presentation.viewmodel.SignInViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 
 @ExperimentalComposeUiApi
 @Composable
-fun SignInScreen(navController: NavController, viewModel: SignInViewModel = hiltViewModel()) {
-    viewModel.signInState.apply {
-        if (signInSuccess) {
-            WelcomeDialog()
-            LaunchedEffect(key1 = signInSuccess) {
-                delay(3000L)
-                navController.navigate(FEATURES_GRAPH_ROUTE) {
-                    popUpTo(Destination.SignInDestination.route) {
-                        inclusive = true
+fun SignInScreen(
+    navController: NavController,
+    viewModel: SignInViewModel = hiltViewModel()
+) {
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.Navigate -> {
+                    navController.navigate(event.route) {
+                        popUpTo(Destination.SignInDestination.route) {
+                            inclusive = true
+                        }
                     }
                 }
+                else -> Unit
             }
         }
-
-        SignInScreenContent(
-            isLoading = isLoading,
-            error = error,
-            onErrorDialogDismiss = {
-                viewModel.clearError()
-            },
-            emailInputFieldState = emailInputState,
-            passwordInputFieldState = passwordInputState,
-            onSignInPressed = {
-                emailInputState.validate()
-                passwordInputState.validate()
-
-                if (emailInputState.hasNoError() && passwordInputState.hasNoError()) {
-                    viewModel.onSignIn(emailInputState.text, passwordInputState.text)
-                }
-            },
-            onForgotPasswordPressed = {
-                emailInputState.apply {
-                    validate()
-                    if (hasNoError()) {
-                        viewModel.onResetPassword(text)
-                    }
-                }
-            },
-            onSignUpPressed = {
-                navController.navigate(Destination.SignUpDestination.route) {
-                    popUpTo(Destination.SignInDestination.route) {
-                        inclusive = true
-                    }
-                }
-            }
-        )
     }
-}
 
-@ExperimentalComposeUiApi
-@Composable
-fun SignInScreenContent(
-    isLoading: Boolean,
-    error: UIError,
-    onErrorDialogDismiss: () -> Unit,
-    emailInputFieldState: TextFieldState,
-    passwordInputFieldState: TextFieldState,
-    onSignInPressed: () -> Unit,
-    onForgotPasswordPressed: () -> Unit,
-    onSignUpPressed: () -> Unit
-) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxHeight()
@@ -103,12 +60,23 @@ fun SignInScreenContent(
             thirdPartySignInLayout,
             signUpBtn) = createRefs()
 
-        if (isLoading) {
-            LoadingDialog(DialogLoadingType.Identification)
+        if (viewModel.showWelcomeDialog) {
+            WelcomeDialog()
         }
 
-        if (error.isActive) {
-            InfoDialog(error.dialogType, error.text, onDismissPressed = onErrorDialogDismiss)
+        if (viewModel.loadingDialogConfig.isActive) {
+            LoadingDialog(viewModel.loadingDialogConfig.loadingType)
+        }
+
+        if (viewModel.infoDialogConfig.isActive) {
+            InfoDialog(
+                infoType = viewModel.infoDialogConfig.infoType,
+                title = viewModel.infoDialogConfig.title,
+                subtitle = viewModel.infoDialogConfig.subtitle,
+                onDismissPressed = {
+                    viewModel.onEvent(SignInEvent.OnDialogDismiss)
+                }
+            )
         }
 
         WelcomeCard(
@@ -124,14 +92,14 @@ fun SignInScreenContent(
             modifier = Modifier.constrainAs(emailTextField) {
                 top.linkTo(welcomeCard.bottom, margin = 42.dp)
             },
-            state = emailInputFieldState
+            state = viewModel.emailInputState
         )
 
         PasswordTextField(
             modifier = Modifier.constrainAs(passwordTextField) {
                 top.linkTo(emailTextField.bottom, margin = 8.dp)
             },
-            state = passwordInputFieldState
+            state = viewModel.passwordInputState
         )
 
         CornerRoundedButton(
@@ -144,7 +112,19 @@ fun SignInScreenContent(
             text = "Sign In",
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
-                onSignInPressed()
+                viewModel.emailInputState.validate()
+                viewModel.passwordInputState.validate()
+
+                if (viewModel.emailInputState.hasNoError() &&
+                    viewModel.passwordInputState.hasNoError()
+                ) {
+                    viewModel.onEvent(
+                        SignInEvent.OnSignInPressed(
+                            viewModel.emailInputState.text,
+                            viewModel.passwordInputState.text
+                        )
+                    )
+                }
             }
         )
 
@@ -158,7 +138,14 @@ fun SignInScreenContent(
                     end.linkTo(parent.end)
                 }
                 .clickable {
-                    onForgotPasswordPressed()
+                    viewModel.emailInputState.apply {
+                        validate()
+                        if (hasNoError()) {
+                            viewModel.onEvent(
+                                SignInEvent.OnForgotPasswordPressed(text)
+                            )
+                        }
+                    }
                 }
         )
 
@@ -172,7 +159,7 @@ fun SignInScreenContent(
             text = "Sign Up",
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {
-                onSignUpPressed()
+                viewModel.onEvent(SignInEvent.OnSignUpPressed)
             }
         )
     }

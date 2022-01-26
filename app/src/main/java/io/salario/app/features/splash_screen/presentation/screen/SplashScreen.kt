@@ -15,47 +15,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import io.salario.app.R
-import io.salario.app.core.navigation.AUTH_GRAPH_ROUTE
-import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
+import io.salario.app.core.domain.model.UIEvent
 import io.salario.app.core.navigation.Destination
+import io.salario.app.features.splash_screen.presentation.event.SplashScreenEvent
 import io.salario.app.features.splash_screen.presentation.viewmodel.SplashScreenViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 
 @Composable
-fun SplashScreen(navController: NavController, viewModel: SplashScreenViewModel = hiltViewModel()) {
-    val onAnimationFinishedCallback = remember {
-        {
-            if (!viewModel.authState.isLoading) {
-                navController.navigate(
-                    if (viewModel.authState.isConnected) {
-                        FEATURES_GRAPH_ROUTE
-                    } else {
-                        AUTH_GRAPH_ROUTE
-                    }
-                ) {
-                    popUpTo(Destination.SplashDestination.route) {
-                        inclusive = true
-                    }
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(key1 = true) {
-        viewModel.getLoggedInUser()
-    }
-
-    SplashScreenContent(onAnimationFinished = onAnimationFinishedCallback)
-}
-
-@Composable
-fun SplashScreenContent(onAnimationFinished: () -> Unit) {
+fun SplashScreen(
+    navController: NavController,
+    viewModel: SplashScreenViewModel = hiltViewModel()
+) {
     val scaleAnimation = remember {
         Animatable(0.1f)
     }
@@ -69,8 +47,23 @@ fun SplashScreenContent(onAnimationFinished: () -> Unit) {
                     OvershootInterpolator(2f).getInterpolation(it)
                 }
             ))
-        delay(500L)
-        onAnimationFinished()
+        delay(3500)
+        viewModel.onEvent(SplashScreenEvent.OnAnimationFinished)
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.Navigate -> {
+                    navController.navigate(event.route) {
+                        popUpTo(Destination.SplashDestination.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+                else -> Unit
+            }
+        }
     }
 
     Box(
@@ -97,5 +90,7 @@ fun SplashScreenContent(onAnimationFinished: () -> Unit) {
 @Preview
 @Composable
 fun PreviewSplashScreen() {
-    SplashScreenContent {}
+    SplashScreen(
+        navController = NavController(LocalContext.current)
+    )
 }

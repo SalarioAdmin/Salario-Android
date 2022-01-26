@@ -23,23 +23,23 @@ import io.salario.app.R
 @ExperimentalComposeUiApi
 @Composable
 fun InfoDialog(
-    infoType: DialogInfoType,
+    infoType: InfoDialogType,
     title: String,
     subtitle: String = "",
     onDismissPressed: () -> Unit
 ) {
     val composition by rememberLottieComposition(
         when (infoType) {
-            DialogInfoType.ErrorGeneral -> {
+            InfoDialogType.ErrorGeneral -> {
                 LottieCompositionSpec.RawRes(R.raw.something_went_wrong_animation)
             }
-            DialogInfoType.ErrorNoConnection -> {
+            InfoDialogType.ErrorNoConnection -> {
                 LottieCompositionSpec.RawRes(R.raw.no_connection_animation)
             }
-            DialogInfoType.ErrorWrongCredentials -> {
+            InfoDialogType.ErrorWrongCredentials -> {
                 LottieCompositionSpec.RawRes(R.raw.wrong_action_animation)
             }
-            DialogInfoType.InfoValidationEmailSent -> {
+            InfoDialogType.InfoValidationEmailSent -> {
                 LottieCompositionSpec.RawRes(R.raw.send_email_animation)
             }
         }
@@ -106,9 +106,9 @@ fun InfoDialog(
     )
 }
 
-sealed class DialogInfoType {
-    object ErrorGeneral : DialogInfoType()
-    object ErrorWrongCredentials : DialogInfoType()
-    object ErrorNoConnection : DialogInfoType()
-    object InfoValidationEmailSent : DialogInfoType()
+sealed class InfoDialogType {
+    object ErrorGeneral : InfoDialogType()
+    object ErrorWrongCredentials : InfoDialogType()
+    object ErrorNoConnection : InfoDialogType()
+    object InfoValidationEmailSent : InfoDialogType()
 }

@@ -15,83 +15,33 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import io.salario.app.R
-import io.salario.app.core.domain.model.UIError
+import io.salario.app.core.domain.model.UIEvent
 import io.salario.app.core.navigation.Destination
-import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
 import io.salario.app.core.shared_ui.composable.*
-import io.salario.app.core.shared_ui.state_holder.TextFieldState
+import io.salario.app.features.auth.presentation.event.SignUpEvent
 import io.salario.app.features.auth.presentation.viewmodel.SignUpViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 
 @ExperimentalComposeUiApi
 @Composable
-fun SignUpScreen(navController: NavController, viewModel: SignUpViewModel = hiltViewModel()) {
-    viewModel.signUpState.apply {
-        if (signUpSuccess) {
-            WelcomeDialog()
-            LaunchedEffect(key1 = signUpSuccess) {
-                delay(3000L)
-                navController.navigate(FEATURES_GRAPH_ROUTE) {
-                    popUpTo(Destination.SignUpDestination.route) {
-                        inclusive = true
+fun SignUpScreen(
+    navController: NavController,
+    viewModel: SignUpViewModel = hiltViewModel()
+) {
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UIEvent.Navigate -> {
+                    navController.navigate(event.route) {
+                        popUpTo(Destination.SignInDestination.route) {
+                            inclusive = true
+                        }
                     }
                 }
+                else -> Unit
             }
         }
-
-        SignUpScreenContent(
-            isLoading = isLoading,
-            error = error,
-            onErrorDialogDismiss = {
-                viewModel.clearError()
-            },
-            firstNameInputFieldState = firstNameInputState,
-            lastNameInputFieldState = lastNameInputState,
-            emailInputFieldState = emailInputState,
-            passwordInputFieldState = passwordInputState,
-            onSignUpPressed = {
-                firstNameInputState.validate()
-                lastNameInputState.validate()
-                emailInputState.validate()
-                passwordInputState.validate()
-
-                if (firstNameInputState.hasNoError() &&
-                    lastNameInputState.hasNoError() &&
-                    emailInputState.hasNoError() &&
-                    passwordInputState.hasNoError()
-                ) {
-                    viewModel.onSignUp(
-                        firstNameInputState.text,
-                        lastNameInputState.text,
-                        emailInputState.text,
-                        passwordInputState.text
-                    )
-                }
-            },
-            onSignInPressed = {
-                navController.navigate(Destination.SignInDestination.route) {
-                    popUpTo(Destination.SignUpDestination.route) {
-                        inclusive = true
-                    }
-                }
-            }
-        )
     }
-}
-
-@ExperimentalComposeUiApi
-@Composable
-fun SignUpScreenContent(
-    isLoading: Boolean,
-    error: UIError,
-    onErrorDialogDismiss: () -> Unit,
-    firstNameInputFieldState: TextFieldState,
-    lastNameInputFieldState: TextFieldState,
-    emailInputFieldState: TextFieldState,
-    passwordInputFieldState: TextFieldState,
-    onSignUpPressed: () -> Unit,
-    onSignInPressed: () -> Unit
-) {
 
     ConstraintLayout(
         modifier = Modifier
@@ -106,12 +56,23 @@ fun SignUpScreenContent(
             thirdPartySignInLayout,
             signInBtn) = createRefs()
 
-        if (isLoading) {
-            LoadingDialog(DialogLoadingType.General)
+        if (viewModel.showWelcomeDialog) {
+            WelcomeDialog()
         }
 
-        if (error.isActive) {
-            InfoDialog(error.dialogType, error.text, onDismissPressed = onErrorDialogDismiss)
+        if (viewModel.loadingDialogConfig.isActive) {
+            LoadingDialog(viewModel.loadingDialogConfig.loadingType)
+        }
+
+        if (viewModel.infoDialogConfig.isActive) {
+            InfoDialog(
+                infoType = viewModel.infoDialogConfig.infoType,
+                title = viewModel.infoDialogConfig.title,
+                subtitle = viewModel.infoDialogConfig.subtitle,
+                onDismissPressed = {
+                    viewModel.onEvent(SignUpEvent.OnDialogDismiss)
+                }
+            )
         }
 
         WelcomeCard(
@@ -127,7 +88,7 @@ fun SignUpScreenContent(
             modifier = Modifier.constrainAs(emailTextField) {
                 top.linkTo(welcomeCard.bottom, margin = 42.dp)
             },
-            state = emailInputFieldState
+            state = viewModel.emailInputState
         )
 
         Row(
@@ -141,13 +102,13 @@ fun SignUpScreenContent(
             SampleTextField(
                 Modifier.weight(0.5f),
                 label = "First Name",
-                state = firstNameInputFieldState
+                state = viewModel.firstNameInputState
             )
 
             SampleTextField(
                 Modifier.weight(0.5f),
                 label = "Last Name",
-                state = lastNameInputFieldState
+                state = viewModel.lastNameInputState
             )
         }
 
@@ -155,7 +116,7 @@ fun SignUpScreenContent(
             modifier = Modifier.constrainAs(passwordTextField) {
                 top.linkTo(nameLayout.bottom, margin = 8.dp)
             },
-            state = passwordInputFieldState
+            state = viewModel.passwordInputState
         )
 
         CornerRoundedButton(
@@ -168,7 +129,27 @@ fun SignUpScreenContent(
             text = "Sign Up",
             appearance = CornerRoundedButtonAppearance.Filled,
             onClick = {
-                onSignUpPressed()
+                viewModel.apply {
+                    firstNameInputState.validate()
+                    lastNameInputState.validate()
+                    emailInputState.validate()
+                    passwordInputState.validate()
+
+                    if (firstNameInputState.hasNoError() &&
+                        lastNameInputState.hasNoError() &&
+                        emailInputState.hasNoError() &&
+                        passwordInputState.hasNoError()
+                    ) {
+                        onEvent(
+                            SignUpEvent.OnSignUpPressed(
+                                firstNameInputState.text,
+                                lastNameInputState.text,
+                                emailInputState.text,
+                                passwordInputState.text
+                            )
+                        )
+                    }
+                }
             }
         )
 
@@ -182,7 +163,7 @@ fun SignUpScreenContent(
             text = "Sign In",
             appearance = CornerRoundedButtonAppearance.Outlined,
             onClick = {
-                onSignInPressed()
+                viewModel.onEvent(SignUpEvent.OnSignInPressed)
             }
         )
     }

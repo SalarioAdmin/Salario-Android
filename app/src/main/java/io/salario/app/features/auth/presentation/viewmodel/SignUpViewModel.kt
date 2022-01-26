@@ -6,69 +6,105 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.salario.app.core.domain.model.UIError
-import io.salario.app.core.shared_ui.composable.DialogInfoType
-import io.salario.app.core.util.Resource
-import io.salario.app.core.util.network.ErrorType
+import io.salario.app.core.domain.model.InfoDialogConfig
+import io.salario.app.core.domain.model.LoadingDialogConfig
+import io.salario.app.core.domain.model.UIEvent
+import io.salario.app.core.navigation.Destination
+import io.salario.app.core.navigation.FEATURES_GRAPH_ROUTE
+import io.salario.app.core.shared_ui.composable.InfoDialogType
+import io.salario.app.core.shared_ui.composable.LoadingDialogType
+import io.salario.app.core.shared_ui.state_holder.TextFieldState
+import io.salario.app.core.util.*
 import io.salario.app.features.auth.domain.use_case.CreateUser
-import io.salario.app.features.auth.presentation.state.SignUpState
+import io.salario.app.features.auth.presentation.event.SignUpEvent
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val createUser: CreateUser
 ) : ViewModel() {
-    var signUpState by mutableStateOf(SignUpState())
-        private set
+    private val _uiEvent = Channel<UIEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun onSignUp(firstName: String, lastName: String, email: String, password: String) {
+    var showWelcomeDialog by mutableStateOf(false)
+    var loadingDialogConfig by mutableStateOf(
+        LoadingDialogConfig()
+    )
+    var infoDialogConfig by mutableStateOf(InfoDialogConfig())
+    val emailInputState = TextFieldState(validate = { it.validateEmail() })
+    val passwordInputState = TextFieldState(validate = { it.validatePassword() })
+    val firstNameInputState: TextFieldState = TextFieldState(validate = { it.validateFirstName() })
+    val lastNameInputState: TextFieldState = TextFieldState(validate = { it.validateLastName() })
+
+    fun onEvent(event: SignUpEvent) {
+        when (event) {
+            is SignUpEvent.OnSignUpPressed -> {
+                signUp(event.firstName, event.lastName, event.email, event.password)
+            }
+            is SignUpEvent.OnSignInPressed -> {
+                sendUiEvent(UIEvent.Navigate(Destination.SignInDestination.route))
+            }
+            is SignUpEvent.OnDialogDismiss -> {
+                resetInfoDialog()
+            }
+        }
+    }
+
+    private fun signUp(firstName: String, lastName: String, email: String, password: String) {
         createUser(firstName, lastName, email, password)
             .onEach { result ->
                 when (result) {
-                    is Resource.Error -> {
-                        signUpState = signUpState.copy(
-                            isLoading = false
-                        ).apply {
-                            error = UIError(
-                                result.message!!,
-                                dialogType = when (result.type) {
-                                    ErrorType.IO -> DialogInfoType.ErrorNoConnection
-                                    ErrorType.ServerError -> DialogInfoType.ErrorGeneral
-                                    ErrorType.WrongInput -> DialogInfoType.ErrorWrongCredentials
-                                    else -> DialogInfoType.ErrorGeneral
-                                },
-                                isActive = true
-                            )
-                        }
-                    }
                     is Resource.Loading -> {
-                        signUpState = signUpState.copy(
-                            isLoading = true
-                        ).apply {
-                            error = error.copy(
-                                isActive = false
-                            )
-                        }
+                        resetInfoDialog()
+                        configureLoadingDialog(showDialog = true)
+                    }
+                    is Resource.Error -> {
+                        configureLoadingDialog(showDialog = false)
+                        configureInfoDialog(
+                            message = result.message ?: "",
+                            type = result.type!!.toDialogType()
+                        )
                     }
                     is Resource.Success -> {
-                        signUpState = signUpState.copy(
-                            isLoading = false,
-                            signUpSuccess = true
-                        ).apply {
-                            error = error.copy(
-                                isActive = false
-                            )
-                        }
+                        configureLoadingDialog(showDialog = false)
+                        showWelcomeDialog = true
+                        delay(2000)
+                        sendUiEvent(UIEvent.Navigate(FEATURES_GRAPH_ROUTE))
                     }
                 }
             }.launchIn(viewModelScope)
     }
 
-    fun clearError() {
-        signUpState.error = signUpState.error.copy(
-            isActive = false
+    private fun configureLoadingDialog(showDialog: Boolean, type: LoadingDialogType? = null) {
+        loadingDialogConfig = loadingDialogConfig.copy(
+            isActive = showDialog,
+            loadingType = type ?: LoadingDialogType.General
         )
+    }
+
+    private fun configureInfoDialog(message: String, type: InfoDialogType) {
+        infoDialogConfig = InfoDialogConfig(
+            title = message,
+            infoType = type,
+            isActive = true
+        )
+    }
+
+    private fun resetInfoDialog() {
+        if (infoDialogConfig.isActive) {
+            infoDialogConfig = InfoDialogConfig()
+        }
+    }
+
+    private fun sendUiEvent(event: UIEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
+        }
     }
 }

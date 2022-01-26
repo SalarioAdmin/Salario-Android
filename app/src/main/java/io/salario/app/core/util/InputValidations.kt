@@ -90,6 +90,36 @@ fun getPasswordValidationError(password: String): String? {
     }
 }
 
+fun String.validateEmail(): String? {
+    return when {
+        this.isEmpty() || isBlank() -> "Email should not be empty"
+        !isValidEmail(this) -> "Please enter a valid Email address"
+        else -> null
+    }
+}
+
+fun String.validatePassword(): String? {
+    return  if (isEmpty() || isBlank()) {
+        "Password should not be empty"
+    } else {
+        getPasswordValidationError(this)
+    }
+}
+
+fun String.validateFirstName(): String? {
+    return when {
+        isBlank() -> "First Name should not be empty."
+        else -> null
+    }
+}
+
+fun String.validateLastName(): String? {
+    return when {
+        isBlank() -> "Last Name should not be empty."
+        else -> null
+    }
+}
+
 sealed class PasswordValidationResult {
     object PasswordOk : PasswordValidationResult()
     object ErrorPasswordTooShort : PasswordValidationResult()

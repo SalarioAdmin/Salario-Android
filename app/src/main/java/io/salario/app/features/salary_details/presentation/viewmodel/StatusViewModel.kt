@@ -6,16 +6,23 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.salario.app.core.domain.model.UIError
-import io.salario.app.core.shared_ui.composable.DialogInfoType
+import io.salario.app.core.domain.model.InfoDialogConfig
+import io.salario.app.core.domain.model.LoadingDialogConfig
+import io.salario.app.core.domain.model.UIEvent
+import io.salario.app.core.shared_ui.composable.InfoDialogType
+import io.salario.app.core.shared_ui.composable.LoadingDialogType
 import io.salario.app.core.util.Resource
-import io.salario.app.core.util.network.ErrorType
+import io.salario.app.core.util.toDialogType
 import io.salario.app.features.salary_details.domain.model.Paycheck
 import io.salario.app.features.salary_details.domain.use_case.GetAllUserPaychecks
 import io.salario.app.features.salary_details.domain.use_case.UploadPaycheck
-import io.salario.app.features.salary_details.presentation.state.StatusState
+import io.salario.app.features.salary_details.presentation.event.StatusEvent
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,107 +30,105 @@ class StatusViewModel @Inject constructor(
     private val uploadPaycheck: UploadPaycheck,
     private val getAllUserPaychecks: GetAllUserPaychecks
 ) : ViewModel() {
-    var statusState by mutableStateOf(StatusState())
-        private set
+    private val _uiEvent = Channel<UIEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
-    fun onUploadPaycheck(pdfData: String) {
+    var showExitDialog by mutableStateOf(false)
+    var loadingDialogConfig by mutableStateOf(LoadingDialogConfig())
+    var infoDialogConfig by mutableStateOf(InfoDialogConfig())
+
+    val paychecks = MutableSharedFlow<List<Paycheck>>()
+
+    fun onEvent(event: StatusEvent) {
+        when (event) {
+            is StatusEvent.OnFilePicked -> {
+                uploadFile(event.fileBase64)
+            }
+            is StatusEvent.OnLoadPaychecksRequest -> {
+                getUserPaychecks()
+            }
+            is StatusEvent.OnDialogDismiss -> {
+                resetInfoDialog()
+            }
+            is StatusEvent.OnExitPressed -> {
+                showExitDialog = true
+            }
+            is StatusEvent.OnBackPressed -> {
+                showExitDialog = false
+            }
+        }
+    }
+
+    private fun uploadFile(pdfData: String) {
         uploadPaycheck(pdfData)
             .onEach { result ->
                 when (result) {
-                    is Resource.Error -> {
-                        statusState = statusState.copy(
-                            isLoading = false
-                        ).apply {
-                            error = UIError(
-                                result.message!!,
-                                dialogType = when (result.type) {
-                                    ErrorType.IO -> DialogInfoType.ErrorNoConnection
-                                    ErrorType.ServerError -> DialogInfoType.ErrorGeneral
-                                    ErrorType.WrongInput -> DialogInfoType.ErrorWrongCredentials
-                                    else -> DialogInfoType.ErrorGeneral
-                                },
-                                isActive = true
-                            )
-                        }
-                    }
                     is Resource.Loading -> {
-                        statusState = statusState.copy(
-                            isLoading = true
-                        ).apply {
-                            statusState.error = statusState.error.copy(
-                                isActive = false
-                            )
-                        }
+                        resetInfoDialog()
+                        configureLoadingDialog(showDialog = true)
+                    }
+                    is Resource.Error -> {
+                        configureLoadingDialog(showDialog = false)
+                        configureInfoDialog(
+                            message = result.message ?: "",
+                            type = result.type!!.toDialogType()
+                        )
                     }
                     is Resource.Success -> {
-                        statusState = statusState.copy(
-                            isLoading = false
-                        ).apply {
-                            statusState.error = statusState.error.copy(
-                                isActive = false
-                            )
-                            showUploadSuccessDialog = true
-                        }
+                        configureLoadingDialog(showDialog = false)
+                        sendUiEvent(UIEvent.ShowSnackbar("Upload success!"))
                     }
                 }
             }.launchIn(viewModelScope)
     }
 
-    fun getUserPaychecks() {
+    private fun getUserPaychecks() {
         getAllUserPaychecks()
             .onEach { result ->
                 when (result) {
-                    is Resource.Error -> {
-                        statusState = statusState.copy(
-                            isLoading = false
-                        ).apply {
-                            error = UIError(
-                                result.message!!,
-                                dialogType = when (result.type) {
-                                    ErrorType.IO -> DialogInfoType.ErrorNoConnection
-                                    ErrorType.ServerError -> DialogInfoType.ErrorGeneral
-                                    ErrorType.WrongInput -> DialogInfoType.ErrorWrongCredentials
-                                    else -> DialogInfoType.ErrorGeneral
-                                },
-                                isActive = true
-                            )
-                        }
-                    }
                     is Resource.Loading -> {
-                        statusState = statusState.copy(
-                            isLoading = true
-                        ).apply {
-                            statusState.error = statusState.error.copy(
-                                isActive = false
-                            )
-                        }
+                        resetInfoDialog()
+                        configureLoadingDialog(showDialog = true)
+                    }
+                    is Resource.Error -> {
+                        configureLoadingDialog(showDialog = false)
+                        configureInfoDialog(
+                            message = result.message ?: "",
+                            type = result.type!!.toDialogType()
+                        )
                     }
                     is Resource.Success -> {
-                        statusState = statusState.copy(
-                            isLoading = false,
-                            paychecks = result.data as List<Paycheck>
-                        ).apply {
-                            statusState.error = statusState.error.copy(
-                                isActive = false
-                            )
-                            showUploadSuccessDialog = true
-                        }
+                        configureLoadingDialog(showDialog = false)
+                        paychecks.emit(result.data as List<Paycheck>)
                     }
                 }
             }.launchIn(viewModelScope)
     }
 
-    fun setErrorDialogVisibility(visible: Boolean) {
-        statusState.error = statusState.error.copy(
-            isActive = visible
+    private fun configureLoadingDialog(showDialog: Boolean, type: LoadingDialogType? = null) {
+        loadingDialogConfig = loadingDialogConfig.copy(
+            isActive = showDialog,
+            loadingType = type ?: LoadingDialogType.General
         )
     }
 
-    fun setExitDialogVisibility(visible: Boolean) {
-        statusState.showExitDialog = visible
+    private fun configureInfoDialog(message: String, type: InfoDialogType) {
+        infoDialogConfig = InfoDialogConfig(
+            title = message,
+            infoType = type,
+            isActive = true
+        )
     }
 
-    fun setUploadSuccessDialogVisibility(visible: Boolean) {
-        statusState.showUploadSuccessDialog = visible
+    private fun resetInfoDialog() {
+        if (infoDialogConfig.isActive) {
+            infoDialogConfig = InfoDialogConfig()
+        }
+    }
+
+    private fun sendUiEvent(event: UIEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
+        }
     }
 }

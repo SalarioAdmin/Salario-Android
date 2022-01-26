@@ -21,16 +21,16 @@ import io.salario.app.R
 
 @ExperimentalComposeUiApi
 @Composable
-fun LoadingDialog(loadingType: DialogLoadingType) {
+fun LoadingDialog(loadingType: LoadingDialogType) {
     val composition by rememberLottieComposition(
         when (loadingType) {
-            DialogLoadingType.General -> {
+            LoadingDialogType.General -> {
                 LottieCompositionSpec.RawRes(R.raw.loading_animation)
             }
-            DialogLoadingType.Identification -> {
+            LoadingDialogType.Identification -> {
                 LottieCompositionSpec.RawRes(R.raw.identification_loading_animation)
             }
-            DialogLoadingType.ScanningFile -> {
+            LoadingDialogType.ScanningFile -> {
                 LottieCompositionSpec.RawRes(R.raw.scanning_file_animation)
             }
         }
@@ -60,8 +60,8 @@ fun LoadingDialog(loadingType: DialogLoadingType) {
     )
 }
 
-sealed class DialogLoadingType {
-    object Identification : DialogLoadingType()
-    object General : DialogLoadingType()
-    object ScanningFile : DialogLoadingType()
+sealed class LoadingDialogType {
+    object Identification : LoadingDialogType()
+    object General : LoadingDialogType()
+    object ScanningFile : LoadingDialogType()
 }
