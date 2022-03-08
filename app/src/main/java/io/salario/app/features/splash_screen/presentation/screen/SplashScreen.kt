@@ -47,7 +47,7 @@ fun SplashScreen(
                     OvershootInterpolator(2f).getInterpolation(it)
                 }
             ))
-        delay(3500)
+        delay(2000)
         viewModel.onEvent(SplashScreenEvent.OnAnimationFinished)
     }
 

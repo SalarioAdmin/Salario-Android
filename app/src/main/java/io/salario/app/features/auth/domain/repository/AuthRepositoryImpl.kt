@@ -93,7 +93,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun refreshAccessToken(): Flow<Resource<out Any>> = flow {
-        val refreshToken = getAccessToken()
+        val refreshToken = dataStoreManager.getRefreshToken().first()
         try {
             val tokenPair = api.refreshAccessToken(RefreshTokenBody(refreshToken))
             saveTokens(tokenPair)

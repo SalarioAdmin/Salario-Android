@@ -6,26 +6,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.Button
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 
-@ExperimentalPermissionsApi
 @Composable
 fun PickPdfFile(
+    buttonText: String,
     onFilePickerResult: (result: FilePickerResult) -> Unit
 ) {
     val context = LocalContext.current
-
-    // TODO Check if needed on lower version of Android
-    val readPermissionState = rememberPermissionState(
-        android.Manifest.permission.READ_EXTERNAL_STORAGE
-    )
 
     var fileUri by remember {
         mutableStateOf<Uri?>(null)
@@ -38,23 +32,16 @@ fun PickPdfFile(
     }
 
     Column {
-        // TODO Check if needed on lower version of Android
-//        Button(onClick = readPermissionState::launchPermissionRequest) {
-//            Text("request read permission")
-//        }
-//
-//        PermissionRequired(readPermissionState, {}, {}) {
-//            Button(onClick = {
-//                launcher.launch(arrayOf("application/pdf"))
-//            }) {
-//                Text(text = "Pick pdf file")
-//            }
-//        }
-
-        Button(onClick = {
-            launcher.launch(arrayOf("application/pdf"))
-        }) {
-            Text(text = "Pick pdf file")
+        FloatingActionButton(
+            backgroundColor = MaterialTheme.colors.primary,
+            onClick = {
+                launcher.launch(arrayOf("application/pdf"))
+            }
+        ) {
+            Text(
+                text = buttonText,
+                style = MaterialTheme.typography.subtitle2
+            )
         }
 
         Spacer(modifier = Modifier.height(12.dp))

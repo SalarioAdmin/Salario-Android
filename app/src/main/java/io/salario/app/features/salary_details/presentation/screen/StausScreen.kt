@@ -5,9 +5,9 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -61,11 +60,51 @@ fun StatusScreen(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top
     ) {
-        PickPdfFile {
+        if (paychecks.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(text = paychecks[0].name)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = paychecks[0].company)
+            Spacer(modifier = Modifier.height(24.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.LightGray, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 16.dp)
+            ) {
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(32.dp))
+                Text(
+                    text = "נטו",
+                    style = MaterialTheme.typography.h1
+                )
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp))
+                Text(
+                    text = "${paychecks[0].paymentNetAmount}₪",
+                    style = MaterialTheme.typography.subtitle1
+                )
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(32.dp))
+            }
+        }
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .height(16.dp))
+        Button(onClick = { viewModel.onEvent(StatusEvent.OnLoadPaychecksRequest) }) {
+            Text(text = "טען נתונים")
+        }
+
+        PickPdfFile("Upload paycheck") {
             when (it) {
                 is FilePickerResult.FilePickerSuccess -> {
                     val pdfBytes = it.result
@@ -74,29 +113,6 @@ fun StatusScreen(
                 }
                 is FilePickerResult.FilePickerFailed -> {
                     Log.e("Status screen", it.message!!) // TODO
-                }
-            }
-        }
-
-        Button(onClick = { viewModel.onEvent(StatusEvent.OnLoadPaychecksRequest) }) {
-            Text(text = "Load paychecks")
-        }
-
-        LazyColumn {
-            items(paychecks) {
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(Color.LightGray),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(text = it.period, textAlign = TextAlign.Center)
-                    Text(text = it.name)
-                    Text(text = it.id)
-                    Text(text = it.address)
-                    Text(text = it.paymentNetAmount.toString())
-                    Text(text = it.company)
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }

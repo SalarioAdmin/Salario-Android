@@ -48,13 +48,15 @@ class StatusViewModel @Inject constructor(
                 getUserPaychecks()
             }
             is StatusEvent.OnDialogDismiss -> {
+                showExitDialog = false
                 resetInfoDialog()
             }
             is StatusEvent.OnExitPressed -> {
-                showExitDialog = true
+                showExitDialog = false
+                // TODO quit the app
             }
             is StatusEvent.OnBackPressed -> {
-                showExitDialog = false
+                showExitDialog = true
             }
         }
     }
